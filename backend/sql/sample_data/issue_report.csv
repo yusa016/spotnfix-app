@@ -1,0 +1,6 @@
+report_id,facility_id,user_id,issue_type,description,photo_path,report_date,status
+1,1,1,Electrical,Projector not turning on in Room 608,photos/projector_issue.jpg,2026-06-20,Resolved
+2,2,2,Hardware,Computer in Lab 402 won't boot,photos/computer_issue.jpg,2026-06-21,In Progress
+3,3,3,Supplies,Whiteboard has a big hole in Room 311,photos/whiteboard.jpg,2026-06-22,In Progress
+4,4,4,Plumbing,Aircon leaking water in Room 216,photos/aircon_leak.jpg,2026-06-23,In Progress
+5,5,4,Hardware,Registrar printer jammed with paper,photos/printer_jam.jpg,2026-06-24,Pending

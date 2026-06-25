@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cardinal's SpotN'Fix</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">
+      <img src="assets/images/logo.png" alt="Cardinal's SpotN'Fix logo" />
+    </a>
+    <div class="header-controls">
+      <button
+        type="button"
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="primary-navigation"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <a href="pages/auth/login.html" class="user-icon" aria-label="Login">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </svg>
+      </a>
+    </div>
+    <nav class="main-nav" id="primary-navigation">
+      <a href="index.html" class="active">Home</a>
+      <a href="about.html">About</a>
+      <a href="features.html">Features</a>
+      <a href="pages/system/reports.html">Report Issue</a>
+      <a href="pages/system/reports.html#track">Track Reports</a>
+      <a href="contact.html">Contact us</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1>Keeping Mapúa Facilities Safe and Functional</h1>
+        <p>
+          Cardinal's SpotN'Fix empowers Mapúans to easily report damaged or malfunctioning
+          campus facilities and equipment. Through monitoring and organized maintenance tracking,
+          issues can be resolved faster, creating a safer and more productive learning environment.
+        </p>
+        <div class="hero-actions">
+          <button type="button" class="btn btn-primary" id="open-home-report-modal">Report an Issue</button>
+          <a href="pages/system/reports.html#track" class="btn btn-primary">Track a Report</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="intro-section">
+      <div class="deco-squares deco-left">
+        <span class="sq sq-grey"></span>
+        <span class="sq sq-red"></span>
+      </div>
+      <div class="intro-grid">
+        <div class="intro-image">
+          <img src="assets/images/intro-desk.jpg" alt="Person working at a desk with monitors" />
+        </div>
+        <div class="intro-text">
+          <h2>Brief Introduction</h2>
+          <p>
+            Cardinal's SpotN'Fix is a web-based reporting and monitoring system for faulty
+            university equipment. It allows students, faculty, and staff to report faulty
+            university equipment and facilities while enabling maintenance personnel to
+            efficiently manage, monitor, and resolve the reported issues.
+          </p>
+          <h2>Key Features</h2>
+          <ul>
+            <li>Seamless facility issue reporting</li>
+            <li>Real-time status tracking</li>
+            <li>Maintenance monitoring dashboard</li>
+            <li>Organized repair records</li>
+            <li>Faster response to campus concerns</li>
+          </ul>
+        </div>
+      </div>
+      <div class="deco-squares deco-right">
+        <span class="sq sq-yellow"></span>
+        <span class="sq sq-dark"></span>
+      </div>
+    </section>
+
+    <div class="report-modal-backdrop" id="home-report-modal-backdrop" hidden>
+      <section class="report-modal" role="dialog" aria-modal="true" aria-labelledby="home-report-modal-title" tabindex="-1">
+        <button type="button" class="modal-close" id="close-home-report-modal" aria-label="Close modal">&times;</button>
+        <h2 id="home-report-modal-title">CREATE A REPORT</h2>
+        <p class="modal-help">Log in or register first.</p>
+        <div class="modal-select-row">
+          <div class="location-type-toggle">
+            <label class="location-radio">
+              <input type="radio" name="home-location-type" value="room" checked>
+              <span>Room</span>
+            </label>
+            <label class="location-radio">
+              <input type="radio" name="home-location-type" value="area">
+              <span>Area</span>
+            </label>
+          </div>
+          <input class="modal-text-input" id="home-create-room" type="text" placeholder="Room number (e.g. 216) *" required />
+          <input class="modal-text-input" id="home-create-area" type="text" placeholder="Area name (e.g. Library) *" hidden />
+          <select id="home-create-floor" hidden>
+            <option value="">Floor *</option>
+            <option value="8th Floor">8th Floor</option>
+            <option value="7th Floor">7th Floor</option>
+            <option value="6th Floor">6th Floor</option>
+            <option value="5th Floor">5th Floor</option>
+            <option value="4th Floor">4th Floor</option>
+            <option value="3rd Floor">3rd Floor</option>
+            <option value="2nd Floor">2nd Floor</option>
+            <option value="1st Floor">1st Floor</option>
+          </select>
+          <p class="modal-help" id="home-detected-floor">Enter a room number (e.g. 216) and the floor is detected automatically.</p>
+          <select id="home-create-facility-type" required>
+            <option value="">Equipment Type *</option>
+            <option value="Television">Television</option>
+            <option value="Computer">Computer</option>
+            <option value="Microscope">Microscope</option>
+            <option value="Projector">Projector</option>
+            <option value="Lighting">Lighting</option>
+            <option value="Printer">Printer</option>
+            <option value="Air Conditioner">Air Conditioner</option>
+            <option value="Other">Other</option>
+          </select>
+          <input class="modal-text-input" id="home-create-facility-name" type="text" placeholder="Equipment Name * (e.g. Television #10)" required />
+          <select id="home-create-issue-type" required>
+            <option value="">Issue Type *</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Supplies">Supplies</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Other">Other</option>
+          </select>
+          <label class="modal-file-label" for="home-create-photo">Photo evidence (optional)</label>
+          <input id="home-create-photo" type="file" accept="image/*" />
+        </div>
+        <textarea id="home-create-description" placeholder="Describe the issue in detail... *" required></textarea>
+        <p id="home-create-report-error" class="create-report-error" aria-live="polite"></p>
+        <button type="button" class="modal-submit" id="submit-home-new-report"><span>+</span> Submit Report</button>
+      </section>
+    </div>
+  </main>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth-helper.js"></script>
+  <script src="assets/js/report-form.js"></script>
+  <script src="assets/js/system-status.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/navigation.js"></script>
+</body>
+</html>

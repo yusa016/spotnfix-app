@@ -1,0 +1,6 @@
+log_id,user_id,action,table_name,record_id,old_value,new_value,timestamp
+1,1,SIGNUP,tbl_users,1,,Account created,2026-06-20
+2,2,LOGIN,tbl_users,2,,Successful login,2026-06-21
+3,3,SIGNUP,tbl_users,3,,Account created,2026-06-22
+4,4,LOGIN,tbl_users,4,,Successful login,2026-06-23
+5,5,LOGIN,tbl_users,5,,Successful login,2026-06-24

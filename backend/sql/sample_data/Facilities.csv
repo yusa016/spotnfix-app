@@ -1,0 +1,6 @@
+facility_id,facility_name,facility_type,room_number,status
+1,Projector,Equipment,608,Operational
+2,Computer Lab PC,Equipment,402,Under Maintenance
+3,Whiteboard,Furniture,311,Under Maintenance
+4,Air Conditioner,Equipment,216,Under Maintenance
+5,Printer,Equipment,101,Faulty

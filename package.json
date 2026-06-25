@@ -1,0 +1,15 @@
+{
+  "name": "spotnfix",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cardinal's SpotN'Fix — demo deploy (API + frontend)",
+  "scripts": {
+    "start": "node backend/src/server.js",
+    "seed": "node backend/src/seed.js",
+    "db:setup": "node backend/scripts/import-schema.js && node backend/src/seed.js",
+    "dev": "npm run dev --prefix backend"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

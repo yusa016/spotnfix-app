@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports | Cardinal's SpotN'Fix</title>
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="../../index.html" class="logo">
+      <img src="../../assets/images/logo.png" alt="Cardinal's SpotN'Fix logo" />
+    </a>
+    <div class="header-controls">
+      <button
+        type="button"
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="primary-navigation"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <a href="../auth/login.html" class="user-icon" aria-label="Login">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </svg>
+      </a>
+    </div>
+    <nav class="main-nav" id="primary-navigation">
+      <a href="../../index.html">Home</a>
+      <a href="../../about.html">About</a>
+      <a href="../../features.html">Features</a>
+      <a href="reports.html" class="active" data-nav-screen="report">Report Issue</a>
+      <a href="reports.html#track" data-nav-screen="track">Track Reports</a>
+      <a href="../../contact.html">Contact us</a>
+    </nav>
+  </header>
+
+  <main class="reports-page" data-screen="report">
+    <section class="reports-top-tabs">
+      <button type="button" class="reports-tab reports-tab-active" data-switch-screen="track">
+        <span class="reports-tab-title">Track Report</span>
+        <span class="reports-tab-sub">Student Responses</span>
+      </button>
+      <button type="button" class="reports-tab" data-switch-screen="analytics">
+        <span class="reports-tab-title">Analytics</span>
+        <span class="reports-tab-sub">Data</span>
+      </button>
+      <button type="button" class="reports-tab" id="admin-contacts-tab" data-switch-screen="contacts" hidden>
+        <span class="reports-tab-title">Contact Inbox</span>
+        <span class="reports-tab-sub">Admin only</span>
+      </button>
+    </section>
+
+    <section class="reports-workspace">
+      <aside class="reports-floors">
+        <div class="floor-row">
+          <span class="reports-side-icon" id="floor-count-8">0</span>
+          <button class="floor-btn floor-btn-active" type="button" data-floor="8th Floor">8th Floor</button>
+        </div>
+        <div class="floor-row">
+          <span class="reports-side-icon" id="floor-count-7">0</span>
+          <button class="floor-btn" type="button" data-floor="7th Floor">7th Floor <small>School of Medicine, medicine-related equipment</small></button>
+        </div>
+        <div class="floor-row">
+          <span class="reports-side-icon" id="floor-count-6">0</span>
+          <button class="floor-btn" type="button" data-floor="6th Floor">6th Floor</button>
+        </div>
+        <div class="floor-row">
+          <span class="reports-side-icon" id="floor-count-5">0</span>
+          <button class="floor-btn" type="button" data-floor="5th Floor">5th Floor</button>
+        </div>
+        <div class="floor-row">
+          <span class="reports-side-icon" id="floor-count-4">0</span>
+          <button class="floor-btn" type="button" data-floor="4th Floor">4th Floor <small>Open Area</small></button>
+        </div>
+        <div class="floor-row">
+          <span class="reports-side-icon" id="floor-count-3">0</span>
+          <button class="floor-btn" type="button" data-floor="3rd Floor">3rd Floor <small>Cardinal Cinema, Library</small></button>
+        </div>
+        <div class="floor-row">
+          <span class="reports-side-icon" id="floor-count-2">0</span>
+          <button class="floor-btn" type="button" data-floor="2nd Floor">2nd Floor</button>
+        </div>
+        <div class="floor-row">
+          <span class="reports-side-icon" id="floor-count-1">0</span>
+          <button class="floor-btn" type="button" data-floor="1st Floor">1st Floor <small>Registrar, Canteen, Lobby, Main Hall (bleachers, tables, seats)</small></button>
+        </div>
+      </aside>
+
+      <section class="reports-board">
+        <div class="reports-filters">
+          <input type="search" class="reports-search" placeholder="Search..." />
+          <select>
+            <option>Date</option>
+            <option>June 16, 2026</option>
+            <option>June 10, 2026</option>
+          </select>
+          <select>
+            <option>Type</option>
+            <option>Television #10</option>
+            <option>Computer #20</option>
+            <option>Microscope #2</option>
+          </select>
+          <select>
+            <option>Room</option>
+            <option>R810</option>
+            <option>R806</option>
+            <option>R823</option>
+          </select>
+          <select>
+            <option>Status</option>
+            <option>In Progress</option>
+            <option>Open</option>
+            <option>Resolved</option>
+          </select>
+          <button type="button" class="clear-btn">Clear</button>
+          <button type="button" class="sort-btn" aria-label="Sort">&#8593;</button>
+          <button type="button" class="menu-btn" aria-label="List menu">&#9776;</button>
+        </div>
+
+        <div class="reports-head">
+          <span>Status</span><span>Room</span><span>Type</span><span>Date</span>
+        </div>
+
+        <div class="reports-list" id="reports-list">
+          <p class="reports-loading">Loading reports from database...</p>
+        </div>
+
+        <aside class="report-detail-panel" id="report-detail-panel" hidden aria-hidden="true">
+          <div class="admin-portal-inner" id="admin-portal-desktop"></div>
+        </aside>
+
+        <button type="button" class="submit-report-btn" id="open-report-modal">
+          <span>+</span> Submit Report
+        </button>
+      </section>
+    </section>
+
+    <section class="reports-analytics-view" id="reports-analytics-view" hidden>
+      <div class="analytics-summary">
+        <article class="analytics-card">
+          <h2>Total Reports</h2>
+          <p class="analytics-value" id="analytics-total">0</p>
+        </article>
+        <article class="analytics-card">
+          <h2>Open</h2>
+          <p class="analytics-value analytics-open" id="analytics-open">0</p>
+        </article>
+        <article class="analytics-card">
+          <h2>In Progress</h2>
+          <p class="analytics-value analytics-progress" id="analytics-progress">0</p>
+        </article>
+        <article class="analytics-card">
+          <h2>Resolved</h2>
+          <p class="analytics-value analytics-resolved" id="analytics-resolved">0</p>
+        </article>
+      </div>
+      <p class="analytics-note">Counts are loaded live from the MariaDB database.</p>
+    </section>
+
+    <section class="reports-contacts-view" id="reports-contacts-view" hidden>
+      <div class="contacts-inbox-layout">
+        <div class="contacts-inbox-list-wrap">
+          <h2 class="contacts-inbox-heading">Contact Messages</h2>
+          <p class="modal-help">Only visible when logged in as admin.</p>
+          <div class="reports-list" id="contacts-list">
+            <p class="reports-loading">Loading contact messages...</p>
+          </div>
+        </div>
+        <aside class="contacts-inbox-detail" id="contacts-detail">
+          <p class="reports-empty">Select a message to read it.</p>
+        </aside>
+      </div>
+    </section>
+
+    <div class="track-detail-backdrop" id="track-detail-backdrop" hidden>
+      <section class="track-detail-modal" role="dialog" aria-modal="true" aria-labelledby="track-detail-title" tabindex="-1">
+        <button type="button" class="modal-close" id="close-track-detail" aria-label="Close detail">&times;</button>
+        <div class="admin-portal-inner" id="admin-portal-mobile"></div>
+      </section>
+    </div>
+
+    <div class="report-modal-backdrop" id="report-modal-backdrop" hidden>
+      <section class="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-modal-title" tabindex="-1">
+        <button type="button" class="modal-close" id="close-report-modal" aria-label="Close modal">&times;</button>
+        <h2 id="report-modal-title">CREATE A REPORT</h2>
+        <p class="modal-help">You must be logged in.</p>
+        <div class="modal-select-row">
+          <div class="location-type-toggle">
+            <label class="location-radio">
+              <input type="radio" name="location-type" value="room" checked>
+              <span>Room</span>
+            </label>
+            <label class="location-radio">
+              <input type="radio" name="location-type" value="area">
+              <span>Area</span>
+            </label>
+          </div>
+          <input class="modal-text-input" id="create-room" type="text" placeholder="Room number (e.g. 216) *" required />
+          <input class="modal-text-input" id="create-area" type="text" placeholder="Area name (e.g. Library) *" hidden />
+          <select id="create-floor" hidden>
+            <option value="">Floor *</option>
+            <option value="8th Floor">8th Floor</option>
+            <option value="7th Floor">7th Floor</option>
+            <option value="6th Floor">6th Floor</option>
+            <option value="5th Floor">5th Floor</option>
+            <option value="4th Floor">4th Floor</option>
+            <option value="3rd Floor">3rd Floor</option>
+            <option value="2nd Floor">2nd Floor</option>
+            <option value="1st Floor">1st Floor</option>
+          </select>
+          <p class="modal-help" id="detected-floor">Enter a room number (e.g. 216) and the floor is detected automatically.</p>
+          <select id="create-facility-type" required>
+            <option value="">Equipment Type *</option>
+            <option value="Television">Television</option>
+            <option value="Computer">Computer</option>
+            <option value="Microscope">Microscope</option>
+            <option value="Projector">Projector</option>
+            <option value="Lighting">Lighting</option>
+            <option value="Printer">Printer</option>
+            <option value="Air Conditioner">Air Conditioner</option>
+            <option value="Other">Other</option>
+          </select>
+          <input class="modal-text-input" id="create-facility-name" type="text" placeholder="Equipment Name * (e.g. Television #10)" required />
+          <select id="create-issue-type" required>
+            <option value="">Issue Type *</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Supplies">Supplies</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Other">Other</option>
+          </select>
+          <label class="modal-file-label" for="create-photo">Photo evidence (optional)</label>
+          <input id="create-photo" type="file" accept="image/*" />
+        </div>
+        <textarea id="create-description" placeholder="Describe the issue in detail... *" required></textarea>
+        <p id="create-report-error" class="create-report-error" aria-live="polite"></p>
+        <button type="button" class="modal-submit" id="submit-new-report"><span>+</span> Submit Report</button>
+      </section>
+    </div>
+  </main>
+
+  <script src="../../assets/js/config.js"></script>
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/auth-helper.js"></script>
+  <script src="../../assets/js/report-form.js"></script>
+  <script src="../../assets/js/system-status.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/admin-contacts.js"></script>
+  <script src="../../assets/js/navigation.js"></script>
+</body>
+</html>

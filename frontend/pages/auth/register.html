@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign up | Cardinal's SpotN'Fix</title>
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
+</head>
+<body class="auth-body">
+  <header class="site-header">
+    <a href="../../index.html" class="logo">
+      <img src="../../assets/images/logo.png" alt="Cardinal's SpotN'Fix logo" />
+    </a>
+    <div class="header-controls">
+      <button
+        type="button"
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="primary-navigation"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <a href="login.html" class="user-icon" aria-label="Login">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </svg>
+      </a>
+    </div>
+    <nav class="main-nav" id="primary-navigation">
+      <a href="../../index.html">Home</a>
+      <a href="../../about.html">About</a>
+      <a href="../../features.html">Features</a>
+      <a href="../system/reports.html">Report Issue</a>
+      <a href="../system/reports.html#track">Track Reports</a>
+      <a href="../../contact.html">Contact us</a>
+    </nav>
+  </header>
+
+  <main class="auth-page">
+    <div class="auth-bg" aria-hidden="true"></div>
+    <section class="auth-split-card" aria-labelledby="register-title">
+      <div class="auth-visual">
+        <div class="auth-visual-overlay" aria-hidden="true"></div>
+        <p class="auth-visual-tagline">Point out the problem, Power the solution.</p>
+      </div>
+      <div class="auth-form-panel">
+        <h1 class="auth-title" id="register-title">Sign up</h1>
+        <form class="auth-form" id="register-form" novalidate>
+          <input class="auth-input" id="register-id-number" type="number" placeholder="ID Number" required>
+          <input class="auth-input" id="register-first-name" type="text" placeholder="First Name" required>
+          <input class="auth-input" id="register-last-name" type="text" placeholder="Last Name" required>
+          <input class="auth-input" id="register-email" name="email" type="email" placeholder="you@mymail.mapua.edu.ph" autocomplete="email" required />
+          <select class="auth-input" id="register-role" required>
+            <option value="student">Student (@mymail.mapua.edu.ph)</option>
+            <option value="faculty">Faculty (@mapua.edu.ph)</option>
+            <option value="other">Other (any email)</option>
+          </select>
+          <p class="auth-hint" id="register-email-hint">Students should use their Mapúa student email ending in @mymail.mapua.edu.ph.</p>
+          <input class="auth-input" id="register-password" name="password" type="password" placeholder="Password (min. 6 characters)" autocomplete="new-password" required />
+          <input class="auth-input" id="register-confirm" name="confirmPassword" type="password" placeholder="Confirm Password" autocomplete="new-password" required />
+          <p class="auth-error" id="register-error" aria-live="polite"></p>
+          <button class="auth-submit" type="submit">Create an account</button>
+        </form>
+        <a class="auth-switch-link" href="login.html">Already have an account? Log in</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../assets/js/config.js"></script>
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/auth-helper.js"></script>
+  <script src="../../assets/js/system-status.js"></script>
+  <script src="../../assets/js/navigation.js"></script>
+  <script src="../../assets/js/register.js"></script>
+</body>
+</html>

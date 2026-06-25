@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact | Cardinal's SpotN'Fix</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">
+      <img src="assets/images/logo.png" alt="Cardinal's SpotN'Fix logo" />
+    </a>
+    <div class="header-controls">
+      <button
+        type="button"
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="primary-navigation"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <a href="pages/auth/login.html" class="user-icon" aria-label="Login">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </svg>
+      </a>
+    </div>
+    <nav class="main-nav" id="primary-navigation">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="features.html">Features</a>
+      <a href="pages/system/reports.html">Report Issue</a>
+      <a href="pages/system/reports.html#track">Track Reports</a>
+      <a href="contact.html" class="active">Contact us</a>
+    </nav>
+  </header>
+
+  <main class="contact-page">
+    <div class="contact-bg-pattern" aria-hidden="true"></div>
+
+    <div class="contact-deco-squares">
+      <span class="sq sq-grey"></span>
+      <span class="sq sq-grey"></span>
+    </div>
+
+    <div class="contact-wrapper">
+      <div class="contact-card">
+        <section class="contact-form-col">
+          <h2 class="contact-form-heading">Reach out to us!</h2>
+          <p class="modal-help contact-form-note">Your message is saved to the database. Admins can read it after logging in.</p>
+          <form class="contact-form" id="contact-form" novalidate>
+            <div class="contact-name-row">
+              <input type="text" id="contact-first-name" placeholder="First Name *" aria-label="First Name" class="contact-input" required />
+              <input type="text" id="contact-last-name" placeholder="Last Name *" aria-label="Last Name" class="contact-input" required />
+            </div>
+            <input type="email" id="contact-email" placeholder="Email Address *" aria-label="Email Address" class="contact-input contact-input-full" required />
+            <input type="text" id="contact-subject" placeholder="Subject *" aria-label="Subject" class="contact-input contact-input-full" required />
+            <textarea class="contact-textarea" id="contact-message" placeholder="Your message *" aria-label="Message" rows="6" required></textarea>
+            <p class="auth-error" id="contact-error" aria-live="polite"></p>
+            <p class="contact-success" id="contact-success" aria-live="polite"></p>
+            <button type="submit" class="contact-submit">Submit</button>
+          </form>
+        </section>
+
+        <section class="contact-info-col">
+          <h2 class="contact-info-heading">Contact<br />Information</h2>
+          <div class="contact-info-details">
+            <p class="contact-info-name">Cardinal's SpotN'Fix Support Team</p>
+            <p class="contact-info-line">Email: support@spotnfix.edu.ph</p>
+            <p class="contact-info-line">Phone: 0912 345 6789</p>
+            <p class="contact-info-line">Based at: Mapúa University, Makati</p>
+          </div>
+          <div class="contact-socials">
+            <a href="#" class="contact-social-link" aria-label="Facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+              Cardinal's SpotNFix
+            </a>
+            <a href="#" class="contact-social-link" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+              @spotnfix_mapua
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <p class="contact-disclaimer">
+        For inquiries, feedback, or assistance regarding facility reports, please contact our support team through the form above.
+      </p>
+    </div>
+  </main>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth-helper.js"></script>
+  <script src="assets/js/system-status.js"></script>
+  <script src="assets/js/navigation.js"></script>
+  <script src="assets/js/contact.js"></script>
+</body>
+</html>
