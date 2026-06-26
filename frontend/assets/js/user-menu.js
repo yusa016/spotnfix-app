@@ -8,12 +8,6 @@
     return "pages/system/profile.html";
   }
 
-  function resetPasswordPath() {
-    if (window.location.pathname.includes("/pages/auth/")) return "reset-password.html";
-    if (window.location.pathname.includes("/pages/")) return "../auth/reset-password.html";
-    return "pages/auth/reset-password.html";
-  }
-
   function loginPath() {
     if (window.location.pathname.includes("/pages/auth/")) return "login.html";
     if (window.location.pathname.includes("/pages/")) return "../auth/login.html";
@@ -57,10 +51,8 @@
         <strong>${user.firstName} ${user.lastName}</strong>
         <span>${user.email}</span>
       </div>
-      <a href="${profilePath()}" role="menuitem">View Profile Information</a>
-      <a href="${profilePath()}#account-settings" role="menuitem">Profile Settings</a>
-      <a href="${resetPasswordPath()}?email=${encodeURIComponent(user.email)}" role="menuitem">Change Password</a>
-      <button type="button" role="menuitem" id="spotnfix-menu-logout">Logout</button>
+      <a href="${profilePath()}" role="menuitem">Profile Information</a>
+      <button type="button" role="menuitem" id="spotnfix-menu-logout">Log-out</button>
       <button type="button" role="menuitem" class="user-menu-danger" id="spotnfix-menu-delete">Delete Account</button>
     `;
 
