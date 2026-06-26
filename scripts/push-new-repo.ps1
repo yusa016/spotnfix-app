@@ -1,26 +1,37 @@
-# Creates a NEW GitHub repo (spotnfix-system) and pushes main.
+# Creates GitHub repo "spotnfix-app" and pushes main (full-stack, separate from old frontend repo).
 # Run after: gh auth login
 
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot\..
 
-$repoName = "spotnfix-system"
-$owner = "stevenblakecasio"
+# Public repo name — shows as spotnfix-app on GitHub / Railway (not stevenblakecasio/spotnfix-system).
+# If you deleted the old frontend-only "spotnfix" repo, you can change this to "spotnfix".
+$repoName = "spotnfix-app"
 
-Write-Host "Creating github.com/$owner/$repoName (if it doesn't exist)..." -ForegroundColor Cyan
-gh repo create "$owner/$repoName" --public --description "Cardinal's SpotN'Fix full-stack (frontend + backend + MariaDB)" --source . --remote origin --push 2>$null
-
-if ($LASTEXITCODE -ne 0) {
-  Write-Host "Repo may already exist — setting remote and pushing..." -ForegroundColor Yellow
-  git remote remove origin 2>$null
-  git remote add origin "https://github.com/$owner/$repoName.git"
-  git push -u origin main
+$owner = gh api user -q .login 2>$null
+if (-not $owner) {
+  Write-Host "Not logged in. Run: gh auth login" -ForegroundColor Red
+  exit 1
 }
+
+Write-Host "GitHub user: $owner" -ForegroundColor Cyan
+Write-Host "Creating github.com/$owner/$repoName ..." -ForegroundColor Cyan
+
+git remote remove origin 2>$null
+
+gh repo create "$owner/$repoName" --public `
+  --description "Cardinal's SpotN'Fix — full-stack (frontend + API + database)" `
+  --source . `
+  --remote origin `
+  --push
 
 if ($LASTEXITCODE -eq 0) {
   Write-Host ""
-  Write-Host "Done! Repo: https://github.com/$owner/$repoName" -ForegroundColor Green
+  Write-Host "Done! https://github.com/$owner/$repoName" -ForegroundColor Green
+  Write-Host "Next: open GO_LIVE.md step B (Railway)." -ForegroundColor Green
 } else {
-  Write-Host "Push failed. Run 'gh auth login' first." -ForegroundColor Red
+  Write-Host "Failed. If the repo already exists, try:" -ForegroundColor Yellow
+  Write-Host "  git remote add origin https://github.com/$owner/$repoName.git"
+  Write-Host "  git push -u origin main"
   exit 1
 }
