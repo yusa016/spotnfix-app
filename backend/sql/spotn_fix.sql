@@ -28,7 +28,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE `tbl_users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
-  `id_number` int(11) NOT NULL,
+  `id_number` bigint NOT NULL,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
