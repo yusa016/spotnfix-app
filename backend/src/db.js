@@ -1,14 +1,23 @@
 const mysql = require("mysql2/promise");
 require("dotenv").config();
 
+function useSsl() {
+  if (process.env.DB_SSL === "false") return false;
+  if (process.env.DB_SSL === "true" || process.env.DB_SSL === "1") return true;
+  const host = process.env.DB_HOST || "";
+  return host.includes("tidbcloud.com") || host.includes("aws.tidbcloud.com");
+}
+
 function buildPoolConfig() {
   const url = process.env.DATABASE_URL || process.env.MYSQL_URL;
+  const ssl = useSsl() ? { rejectUnauthorized: false } : undefined;
+
   if (url) {
     return {
       uri: url,
       waitForConnections: true,
       connectionLimit: 10,
-      ssl: process.env.DB_SSL === "false" ? undefined : { rejectUnauthorized: false },
+      ssl,
     };
   }
 
@@ -20,7 +29,7 @@ function buildPoolConfig() {
     database: process.env.DB_NAME || process.env.MYSQLDATABASE || "spotn_fix",
     waitForConnections: true,
     connectionLimit: 10,
-    ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : undefined,
+    ssl,
   };
 }
 
