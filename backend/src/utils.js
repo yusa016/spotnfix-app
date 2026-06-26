@@ -64,6 +64,7 @@ function mapReportRow(row) {
     issueType: row.issue_type,
     description: row.description,
     photoPath: row.photo_path,
+    submittedAt: row.report_date ? new Date(row.report_date).toISOString() : null,
     date: formatReportDate(row.report_date),
     reportDateIso: row.report_date
       ? new Date(row.report_date).toISOString().slice(0, 10)

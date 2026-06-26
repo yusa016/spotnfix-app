@@ -1,5 +1,32 @@
 const reportsPage = document.querySelector(".reports-page");
 
+function normalizeReportTimestamps(report) {
+  const source = report?.submittedAt;
+  if (!source) return report;
+
+  const at = new Date(source);
+  if (Number.isNaN(at.getTime())) return report;
+
+  report.date = at.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+  report.time = at.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+  report.reportDateIso = `${at.getFullYear()}-${String(at.getMonth() + 1).padStart(2, "0")}-${String(at.getDate()).padStart(2, "0")}`;
+
+  if (Array.isArray(report.history) && report.history.length > 0) {
+    report.history = report.history.map((item, index) =>
+      index === 0 ? { ...item, date: report.date } : item
+    );
+  }
+
+  return report;
+}
+
 function photoUrl(path) {
   if (!path) return "";
   if (path.startsWith("http")) return path;
@@ -244,7 +271,7 @@ if (reportsPage) {
           report.reportId || report.id.replace(/^r/, ""),
           statusSelect.value
         );
-        Object.assign(report, updated);
+        Object.assign(report, normalizeReportTimestamps(updated));
         await refreshReports();
         populateDetailView(getSelectedReport());
       } catch (error) {
@@ -489,7 +516,7 @@ if (reportsPage) {
   };
 
   async function refreshReports() {
-    reports = await SpotnFixAPI.getReports();
+    reports = (await SpotnFixAPI.getReports()).map(normalizeReportTimestamps);
     analytics = await SpotnFixAPI.getAnalytics();
     updateFilterOptions();
     renderReports();
