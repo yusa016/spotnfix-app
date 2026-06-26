@@ -1,108 +1,95 @@
-# Go live — SpotN'Fix
+# Go live — SpotN'Fix (your checklist)
 
-**Host:** [Railway](https://railway.app) → one URL for website + API + MySQL  
-**GitHub repo name:** `spotnfix-app` (project branding — not tied to `spotnfix-system`)
+**GitHub repo (already set up):** https://github.com/yusa016/spotnfix-app
 
-Your old frontend-only repo (`stevenblakecasio/spotnfix`) is **not** touched.
-
----
-
-## Already done for you (in this folder)
-
-- Frontend + API run together (`npm start`)
-- Live sites auto-use `/api` (no manual config URL)
-- Cloud MySQL + SSL in `backend/src/db.js`
-- `railway.toml` — Railway build/start settings
-- `npm run db:setup` — import schema + sample data
-- Sample logins: `admin@spotnfix.local` / `password123`
+**Recommended hosting:** [Render](https://render.com) (app) + [TiDB Cloud Serverless](https://tidbcloud.com) (free MySQL-compatible database)
 
 ---
 
-## What YOU must do (accounts & clicks)
+## Why not Netlify / Firebase / Railway?
 
-### Step 1 — GitHub login (~2 min)
-
-Open **PowerShell**:
-
-```powershell
-gh auth login
-```
-
-1. **GitHub.com**
-2. **HTTPS**
-3. **Login with a web browser**
-4. Paste the one-time code when asked
+| Platform | Works for SpotN'Fix? |
+|----------|----------------------|
+| **Netlify** | No — static sites + serverless only. You need a running Node.js server + MySQL. |
+| **Firebase** | No — would require rewriting the app to Firestore/Auth. |
+| **Railway** | Works, but free credits run out and the project stops. |
+| **Render (free)** | Yes — URL stays forever. App sleeps after ~15 min idle; first visit wakes in ~30–60 sec (open the link before your demo). |
+| **TiDB Cloud (free)** | Yes — MySQL-compatible, free tier stays available for the database. |
 
 ---
 
-### Step 2 — Push to new repo (~1 min)
+## What is already done for you
 
-Still in PowerShell:
-
-```powershell
-cd C:\Users\aifos\spotnfix
-.\scripts\push-new-repo.ps1
-```
-
-This creates **`YOUR_USERNAME/spotnfix-app`** and uploads the full project.
-
-> Want the repo named exactly `spotnfix`? First rename or delete the old frontend-only repo on GitHub, then edit `$repoName` in `scripts/push-new-repo.ps1`.
+- Full project pushed to **your** GitHub: `yusa016/spotnfix-app`
+- One server serves **website + API** (no CORS setup needed)
+- `render.yaml` included for easy Render deploy
+- `npm run db:setup` imports schema + sample data
 
 ---
 
-### Step 3 — Railway project (~10 min)
+## What YOU need to do (about 20 minutes)
 
-1. Go to [railway.app](https://railway.app) → sign in with **GitHub**
-2. **New Project** → **Deploy from GitHub repo** → choose **`spotnfix-app`**
-3. Click the **web service** → **Settings** → rename service to **`SpotNFix`** (optional, for a cleaner dashboard name)
-4. Same project → **+ New** → **Database** → **MySQL**
-5. Click the **web service** (Node, not MySQL) → **Variables** → **Add**:
+### Part A — Free database (TiDB Cloud)
 
-| Variable | Value |
-|----------|--------|
-| `DB_HOST` | `${{MySQL.MYSQLHOST}}` |
-| `DB_PORT` | `${{MySQL.MYSQLPORT}}` |
-| `DB_USER` | `${{MySQL.MYSQLUSER}}` |
-| `DB_PASSWORD` | `${{MySQL.MYSQLPASSWORD}}` |
-| `DB_NAME` | `${{MySQL.MYSQLDATABASE}}` |
+1. Go to https://tidbcloud.com and sign up (free).
+2. Create a **Serverless** cluster (free tier).
+3. Open **Connect** → choose **General** → copy the connection details:
+   - Host, Port, User, Password, Database name
+4. Keep this tab open — you will paste these into Render in Part B.
+
+TiDB uses MySQL protocol. In Render, set:
+
+| Render env var | TiDB value |
+|----------------|------------|
+| `DB_HOST` | your host (e.g. `gateway01.xxx.prod.aws.tidbcloud.com`) |
+| `DB_PORT` | usually `4000` |
+| `DB_USER` | from TiDB |
+| `DB_PASSWORD` | from TiDB |
+| `DB_NAME` | e.g. `spotn_fix` |
 | `DB_SSL` | `true` |
-| `JWT_SECRET` | `spotnfix-demo-jwt-change-this-to-any-long-random-string` |
-| `PORT` | `3000` |
-
-Replace **`MySQL`** with your MySQL service name if Railway named it differently (check the Variables reference picker).
-
-6. **Web service** → **Settings** → **Networking** → **Generate Domain**  
-   Copy the URL (e.g. `spotnfix-app-production.up.railway.app`).
-
-7. Wait for deploy to finish (green). First deploy may fail until variables are set — redeploy after step 5.
 
 ---
 
-### Step 4 — Database setup (one time)
+### Part B — Deploy app (Render)
 
-**Web service** → open **Shell** (or use Railway CLI) and run:
+1. Go to https://render.com and sign up (GitHub login is easiest).
+2. **New +** → **Blueprint** → connect GitHub → select **`yusa016/spotnfix-app`**.
+   - Or: **New Web Service** → same repo → use settings below.
+3. Confirm settings:
+   - **Build command:** `npm install && npm install --prefix backend`
+   - **Start command:** `npm start`
+   - **Plan:** Free
+4. Add **Environment Variables** (Environment tab):
 
-```powershell
+| Key | Value |
+|-----|--------|
+| `DB_HOST` | from TiDB |
+| `DB_PORT` | from TiDB |
+| `DB_USER` | from TiDB |
+| `DB_PASSWORD` | from TiDB |
+| `DB_NAME` | `spotn_fix` (create this database in TiDB if needed) |
+| `DB_SSL` | `true` |
+| `JWT_SECRET` | any long random string (e.g. `spotnfix-demo-jwt-2026-yusa016`) |
+
+5. Click **Deploy**. Wait until status is **Live**.
+6. Open **Shell** on Render (one time) and run:
+
+```bash
 npm run db:setup
 ```
 
-You should see schema imported + sample data loaded.
+7. Visit your Render URL, e.g. `https://spotnfix.onrender.com`
+8. Test: `https://YOUR-URL.onrender.com/api/health` → should show `"connected": true`
 
 ---
 
-### Step 5 — Verify
+### Part C — Before presentation
 
-1. Open `https://YOUR-RAILWAY-DOMAIN/api/health` → `"connected": true`
-2. Open `https://YOUR-RAILWAY-DOMAIN` → home page loads
-3. Log in: `admin@spotnfix.local` / `password123`
-4. **Track Reports** and **Contact Inbox** work
+1. Open the live URL **2 minutes early** (free tier may be waking from sleep).
+2. Log in as admin: `admin@spotnfix.local` / `password123`
+3. Keep **local XAMPP** as backup if Wi‑Fi fails.
 
 ---
-
-## Before presentation
-
-- Open the live URL **2 minutes early** (free tier cold start)
-- Keep **local XAMPP** as backup if Wi‑Fi fails
 
 ## Demo logins
 
@@ -116,11 +103,14 @@ You should see schema imported + sample data loaded.
 
 ## Troubleshooting
 
-| Problem | Fix |
-|---------|-----|
-| Health check: DB disconnected | Check all `DB_*` vars + `DB_SSL=true` |
-| Build failed | Ensure build command is `npm install --prefix backend` |
-| Blank subpages | Redeploy after latest push |
-| `gh auth login` timed out | Run it again; complete browser step within 2 min |
+**Health check: database disconnected**  
+→ Double-check TiDB host/port/user/password and `DB_SSL=true`.
 
-More detail: [DEPLOY.md](./DEPLOY.md)
+**Site loads but 404 on pages**  
+→ Redeploy from Render dashboard (Deploy latest commit).
+
+**Very slow first load**  
+→ Normal on Render free tier after idle. Wake it before presenting.
+
+**Need always-on with zero sleep?**  
+→ Render paid plan ($7/mo) or run locally for the demo.

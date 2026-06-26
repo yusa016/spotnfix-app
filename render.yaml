@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: spotnfix
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm install --prefix backend
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_SSL
+        value: "true"
