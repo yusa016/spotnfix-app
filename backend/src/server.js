@@ -40,6 +40,10 @@ app.use(
 app.use(express.json({ limit: "2mb" }));
 app.use("/uploads", express.static(uploadDir));
 
+app.get("/api/live", (_req, res) => {
+  res.status(200).json({ ok: true, service: "SpotN'Fix API" });
+});
+
 app.get("/api/health", async (_req, res) => {
   try {
     await pool.query("SELECT 1");
