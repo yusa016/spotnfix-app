@@ -23,6 +23,13 @@
     document.documentElement.style.setProperty("--status-banner-height", `${height}px`);
   }
 
+  function removeBanner() {
+    const banner = document.querySelector("#spotnfix-status-banner");
+    if (banner) banner.remove();
+    document.body.classList.remove("has-spotnfix-status");
+    document.documentElement.style.removeProperty("--status-banner-height");
+  }
+
   function setBanner(type, message) {
     createBanner();
     const banner = document.querySelector("#spotnfix-status-banner");
@@ -32,6 +39,12 @@
   }
 
   async function refreshStatus() {
+    const user = window.SpotnFixAPI?.getUser?.();
+    if (user?.role !== "admin") {
+      removeBanner();
+      return;
+    }
+
     createBanner();
 
     if (!window.SpotnFixAPI) {
@@ -41,7 +54,6 @@
 
     try {
       const health = await SpotnFixAPI.checkHealth();
-      const user = SpotnFixAPI.getUser();
       const userLabel = user ? `Logged in as ${user.firstName} ${user.lastName} (${user.role})` : "Not logged in";
       setBanner(
         "ok",

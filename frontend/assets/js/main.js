@@ -176,11 +176,7 @@ if (reportsPage) {
 
   const getRoleScopedReports = () => {
     if (currentUser()?.role === "admin") return reports;
-    const userId = currentUser()?.userId;
-    if (userId) {
-      return reports.filter((report) => report.userId === userId && report.status !== "resolved");
-    }
-    return reports;
+    return reports.filter((report) => report.status !== "resolved");
   };
 
   const isDesktop = () => window.innerWidth >= DESKTOP_BREAKPOINT;
