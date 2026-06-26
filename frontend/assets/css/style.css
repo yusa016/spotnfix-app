@@ -1098,25 +1098,90 @@ body.modal-open {
   display: none;
 }
 
-.reports-page[data-screen="analytics"] .reports-workspace,
-.reports-page[data-screen="contacts"] .reports-workspace {
+.reports-page[data-screen="analytics"] .reports-workspace {
   display: none !important;
 }
 
-.reports-page[data-screen="contacts"] .submit-report-btn {
-  display: none;
-}
-
-.reports-contacts-view {
+.contact-inbox-page {
   position: relative;
   z-index: 1;
+  width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 14px 24px;
+  padding: 0;
 }
 
-.reports-contacts-view[hidden] {
+.contact-inbox-page[hidden] {
   display: none !important;
+}
+
+.contact-page.contact-page--inbox {
+  background: #ebebeb;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 24px 16px 40px;
+  overflow: auto;
+}
+
+.contact-page.contact-page--inbox .contacts-inbox-layout {
+  background: #ececec;
+  border-radius: 12px;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.15);
+  padding: 18px;
+  gap: 16px;
+}
+
+.contact-page.contact-page--inbox .contacts-inbox-list-wrap {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-page.contact-page--inbox .contacts-inbox-heading {
+  margin: 0 0 6px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #8b0000;
+}
+
+.contact-page.contact-page--inbox .contacts-inbox-list-wrap .modal-help {
+  margin: 0 0 12px;
+  color: #555;
+}
+
+.contact-page.contact-page--inbox .contacts-inbox-list-wrap .reports-list {
+  flex: 1;
+  max-height: 380px;
+}
+
+.contact-page.contact-page--inbox .contacts-inbox-list-wrap .reports-empty,
+.contact-page.contact-page--inbox .contacts-inbox-list-wrap .reports-loading {
+  color: #666;
+  text-align: left;
+  padding: 12px 0;
+}
+
+.contact-page.contact-page--inbox .contacts-inbox-detail {
+  background: linear-gradient(180deg, #dfdfdf 0%, #c5c5c5 100%);
+  border-radius: 10px;
+  padding: 16px;
+  min-height: 420px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.contact-page.contact-page--inbox .contacts-inbox-detail .reports-empty {
+  color: #555;
+  text-align: center;
+  padding-top: 48px;
+}
+
+.contact-page.contact-page--inbox .contacts-inbox-detail h3 {
+  margin: 0 0 12px;
+  color: #6d0000;
+  font-size: 18px;
 }
 
 .reports-analytics-view {
@@ -2023,7 +2088,6 @@ body.has-spotnfix-status .site-header {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   gap: 16px;
-  padding: 16px;
 }
 
 .contacts-inbox-heading {

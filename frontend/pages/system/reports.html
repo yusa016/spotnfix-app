@@ -36,7 +36,7 @@
       <a href="../../features.html">Features</a>
       <a href="reports.html" class="active" data-nav-screen="report">Report Issue</a>
       <a href="reports.html#track" data-nav-screen="track">Track Reports</a>
-      <a href="../../contact.html">Contact us</a>
+      <a href="../../contact.html" data-nav-contact>Contact us</a>
     </nav>
   </header>
 
@@ -49,10 +49,6 @@
       <button type="button" class="reports-tab" data-switch-screen="analytics">
         <span class="reports-tab-title">Analytics</span>
         <span class="reports-tab-sub">Data</span>
-      </button>
-      <button type="button" class="reports-tab" id="admin-contacts-tab" data-switch-screen="contacts" hidden>
-        <span class="reports-tab-title">Contact Inbox</span>
-        <span class="reports-tab-sub">Admin only</span>
       </button>
     </section>
 
@@ -163,21 +159,6 @@
       <p class="analytics-note">Counts are loaded live from the MariaDB database.</p>
     </section>
 
-    <section class="reports-contacts-view" id="reports-contacts-view" hidden>
-      <div class="contacts-inbox-layout">
-        <div class="contacts-inbox-list-wrap">
-          <h2 class="contacts-inbox-heading">Contact Messages</h2>
-          <p class="modal-help">Only visible when logged in as admin.</p>
-          <div class="reports-list" id="contacts-list">
-            <p class="reports-loading">Loading contact messages...</p>
-          </div>
-        </div>
-        <aside class="contacts-inbox-detail" id="contacts-detail">
-          <p class="reports-empty">Select a message to read it.</p>
-        </aside>
-      </div>
-    </section>
-
     <div class="track-detail-backdrop" id="track-detail-backdrop" hidden>
       <section class="track-detail-modal" role="dialog" aria-modal="true" aria-labelledby="track-detail-title" tabindex="-1">
         <button type="button" class="modal-close" id="close-track-detail" aria-label="Close detail">&times;</button>
@@ -251,7 +232,6 @@
   <script src="../../assets/js/report-form.js"></script>
   <script src="../../assets/js/system-status.js"></script>
   <script src="../../assets/js/main.js"></script>
-  <script src="../../assets/js/admin-contacts.js"></script>
   <script src="../../assets/js/navigation.js"></script>
 </body>
 </html>

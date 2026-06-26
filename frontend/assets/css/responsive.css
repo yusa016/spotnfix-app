@@ -507,6 +507,20 @@
     font-size: 38px;
   }
 
+  .contact-page.contact-page--inbox {
+    padding: 32px 24px 48px;
+  }
+
+  .contact-page.contact-page--inbox .contacts-inbox-layout {
+    grid-template-columns: 1.3fr 1fr;
+    padding: 20px;
+  }
+
+  .contact-page.contact-page--inbox .contacts-inbox-list-wrap,
+  .contact-page.contact-page--inbox .contacts-inbox-detail {
+    min-height: 480px;
+  }
+
   .auth-split-card {
     grid-template-columns: 1fr 1fr;
   }

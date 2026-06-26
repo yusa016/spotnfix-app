@@ -2,6 +2,13 @@ const navToggle = document.querySelector(".nav-toggle");
 const mainNav = document.querySelector("#primary-navigation");
 const userIconLink = document.querySelector(".user-icon");
 
+function applyContactNavForAdmin() {
+  const admin = window.SpotnFixAuth?.isAdmin?.();
+  document.querySelectorAll("[data-nav-contact], a[href*='contact.html']").forEach((link) => {
+    link.textContent = admin ? "Contact Inbox" : "Contact us";
+  });
+}
+
 function updateUserNav() {
   if (!userIconLink || !window.SpotnFixAPI) return;
 
@@ -29,6 +36,8 @@ function updateUserNav() {
     const logoutBtn = document.querySelector("#spotnfix-logout-btn");
     if (logoutBtn) logoutBtn.remove();
   }
+
+  applyContactNavForAdmin();
 }
 
 if (userIconLink && !userIconLink.getAttribute("data-default-href")) {
@@ -78,6 +87,6 @@ if (navToggle && mainNav) {
 document.addEventListener("DOMContentLoaded", () => {
   updateUserNav();
   if (window.SpotnFixStatus) SpotnFixStatus.refreshStatus();
-  if (window.SpotnFixAdminContacts) SpotnFixAdminContacts.showAdminTabIfNeeded();
+  if (window.SpotnFixAdminContacts?.applyContactPageMode) SpotnFixAdminContacts.applyContactPageMode();
   if (window.SpotnFixAuth?.applyReportSubmitVisibility) SpotnFixAuth.applyReportSubmitVisibility();
 });

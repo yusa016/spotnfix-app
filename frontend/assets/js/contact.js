@@ -1,6 +1,6 @@
 const contactForm = document.querySelector(".contact-form");
 
-if (contactForm) {
+if (contactForm && !(window.SpotnFixAuth?.isAdmin?.())) {
   const firstNameInput = document.querySelector("#contact-first-name");
   const lastNameInput = document.querySelector("#contact-last-name");
   const emailInput = document.querySelector("#contact-email");

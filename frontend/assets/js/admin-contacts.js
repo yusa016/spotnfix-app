@@ -1,12 +1,13 @@
 (function () {
-  const reportsPage = document.querySelector(".reports-page");
-  if (!reportsPage) return;
-
-  const contactsTab = document.querySelector("#admin-contacts-tab");
+  const publicView = document.querySelector("#contact-public-view");
+  const publicDeco = document.querySelector("#contact-public-deco");
+  const bgPattern = document.querySelector(".contact-bg-pattern");
+  const contactPage = document.querySelector(".contact-page");
+  const inboxView = document.querySelector("#contact-inbox-view");
   const contactsList = document.querySelector("#contacts-list");
   const contactsDetail = document.querySelector("#contacts-detail");
 
-  if (!contactsTab || !contactsList) return;
+  if (!contactsList || !inboxView) return;
 
   let messages = [];
   let selectedId = null;
@@ -25,8 +26,22 @@
     });
   }
 
-  function showAdminTabIfNeeded() {
-    contactsTab.hidden = !isAdmin();
+  function applyContactPageMode() {
+    const admin = isAdmin();
+    if (publicView) publicView.hidden = admin;
+    if (publicDeco) publicDeco.hidden = admin;
+    if (bgPattern) bgPattern.hidden = admin;
+    if (contactPage) contactPage.classList.toggle("contact-page--inbox", admin);
+    inboxView.hidden = !admin;
+
+    if (admin) {
+      document.title = "Contact Inbox | Cardinal's SpotN'Fix";
+      loadInbox().catch((error) => {
+        contactsList.innerHTML = `<p class="create-report-error">${error.message}</p>`;
+      });
+    } else {
+      document.title = "Contact | Cardinal's SpotN'Fix";
+    }
   }
 
   function renderList() {
@@ -130,7 +145,5 @@
     renderDetail();
   });
 
-  showAdminTabIfNeeded();
-
-  window.SpotnFixAdminContacts = { loadInbox, showAdminTabIfNeeded };
+  window.SpotnFixAdminContacts = { loadInbox, applyContactPageMode };
 })();

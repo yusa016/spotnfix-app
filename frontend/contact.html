@@ -36,19 +36,19 @@
       <a href="features.html">Features</a>
       <a href="pages/system/reports.html">Report Issue</a>
       <a href="pages/system/reports.html#track">Track Reports</a>
-      <a href="contact.html" class="active">Contact us</a>
+      <a href="contact.html" class="active" data-nav-contact>Contact us</a>
     </nav>
   </header>
 
   <main class="contact-page">
     <div class="contact-bg-pattern" aria-hidden="true"></div>
 
-    <div class="contact-deco-squares">
+    <div class="contact-deco-squares" id="contact-public-deco">
       <span class="sq sq-grey"></span>
       <span class="sq sq-grey"></span>
     </div>
 
-    <div class="contact-wrapper">
+    <div class="contact-wrapper" id="contact-public-view">
       <div class="contact-card">
         <section class="contact-form-col">
           <h2 class="contact-form-heading">Reach out to us!</h2>
@@ -98,6 +98,21 @@
         For inquiries, feedback, or assistance regarding facility reports, please contact our support team through the form above.
       </p>
     </div>
+
+    <section class="contact-inbox-page" id="contact-inbox-view" hidden>
+      <div class="contacts-inbox-layout">
+        <div class="contacts-inbox-list-wrap">
+          <h2 class="contacts-inbox-heading">Contact Inbox</h2>
+          <p class="modal-help">Messages submitted from the public Contact us page.</p>
+          <div class="reports-list" id="contacts-list">
+            <p class="reports-loading">Loading contact messages...</p>
+          </div>
+        </div>
+        <aside class="contacts-inbox-detail" id="contacts-detail">
+          <p class="reports-empty">Select a message to read it.</p>
+        </aside>
+      </div>
+    </section>
   </main>
 
   <script src="assets/js/config.js"></script>
@@ -106,5 +121,6 @@
   <script src="assets/js/system-status.js"></script>
   <script src="assets/js/navigation.js"></script>
   <script src="assets/js/contact.js"></script>
+  <script src="assets/js/admin-contacts.js"></script>
 </body>
 </html>

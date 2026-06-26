@@ -4,6 +4,7 @@
   "private": true,
   "description": "Cardinal's SpotN'Fix — demo deploy (API + frontend)",
   "scripts": {
+    "postinstall": "npm install --prefix backend",
     "start": "node backend/src/server.js",
     "seed": "node backend/src/seed.js",
     "db:setup": "node backend/scripts/import-schema.js && node backend/src/seed.js",

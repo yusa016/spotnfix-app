@@ -233,41 +233,25 @@ if (reportsPage) {
   };
 
   const analyticsView = document.querySelector("#reports-analytics-view");
-  const contactsView = document.querySelector("#reports-contacts-view");
   const workspace = document.querySelector(".reports-workspace");
 
   const setActiveScreen = (screen) => {
-    let normalized = ["track", "analytics", "contacts"].includes(screen) ? screen : "report";
+    let normalized = ["track", "analytics"].includes(screen) ? screen : "report";
 
     if (normalized === "report" && SpotnFixAuth.isAdmin?.()) {
-      normalized = "track";
-    }
-
-    if (normalized === "contacts" && SpotnFixAPI.getUser()?.role !== "admin") {
-      window.alert("Only administrators can view contact messages.");
       normalized = "track";
     }
 
     reportsPage.dataset.screen = normalized;
     navLinks.forEach((link) => link.classList.toggle("active", link.dataset.navScreen === (normalized === "report" ? "report" : "track")));
     switchButtons.forEach((button) => {
-      const activeTarget = normalized === "analytics" ? "analytics" : normalized === "contacts" ? "contacts" : "track";
+      const activeTarget = normalized === "analytics" ? "analytics" : "track";
       button.classList.toggle("reports-tab-active", button.dataset.switchScreen === activeTarget);
     });
     if (analyticsView) analyticsView.hidden = normalized !== "analytics";
-    if (contactsView) contactsView.hidden = normalized !== "contacts";
-    if (workspace) workspace.hidden = normalized === "contacts" || normalized === "analytics";
+    if (workspace) workspace.hidden = normalized === "analytics";
 
-    if (normalized === "contacts") {
-      hideDetailViews();
-      selectedReportId = null;
-      if (window.SpotnFixAdminContacts) {
-        SpotnFixAdminContacts.loadInbox().catch((error) => {
-          const list = document.querySelector("#contacts-list");
-          if (list) list.innerHTML = `<p class="create-report-error">${error.message}</p>`;
-        });
-      }
-    } else if (normalized === "report") hideDetailViews();
+    if (normalized === "report") hideDetailViews();
     else if (normalized === "analytics") {
       hideDetailViews();
       selectedReportId = null;
@@ -414,8 +398,11 @@ if (reportsPage) {
   });
 
   const updateScreenFromHash = () => {
+    if (window.location.hash === "#contacts") {
+      window.location.href = "../../contact.html";
+      return;
+    }
     if (window.location.hash === "#analytics") return setActiveScreen("analytics");
-    if (window.location.hash === "#contacts") return setActiveScreen("contacts");
     if (window.location.hash === "#track") return setActiveScreen("track");
     if (SpotnFixAuth.isAdmin?.()) {
       history.replaceState(null, "", `${window.location.pathname}#track`);
@@ -448,8 +435,7 @@ if (reportsPage) {
     button.addEventListener("click", () => {
       const target = button.dataset.switchScreen || "track";
       setActiveScreen(target);
-      const hash =
-        target === "track" ? "#track" : target === "analytics" ? "#analytics" : target === "contacts" ? "#contacts" : "";
+      const hash = target === "track" ? "#track" : target === "analytics" ? "#analytics" : "";
       history.replaceState(null, "", `${window.location.pathname}${hash}`);
     });
   });
