@@ -35,7 +35,7 @@
       <a href="../../about.html">About</a>
       <a href="../../features.html">Features</a>
       <a href="reports.html" class="active" data-nav-screen="report">Report Issue</a>
-      <a href="reports.html#track" data-nav-screen="track">Track Reports</a>
+      <a href="reports.html#track" data-nav-screen="track" data-nav-track>Track Reports</a>
       <a href="../../contact.html" data-nav-contact>Contact us</a>
     </nav>
   </header>
@@ -90,33 +90,46 @@
 
       <section class="reports-board">
         <div class="reports-filters">
-          <input type="search" class="reports-search" placeholder="Search..." />
-          <select>
-            <option>Date</option>
-            <option>June 16, 2026</option>
-            <option>June 10, 2026</option>
+          <input type="search" class="reports-search" placeholder="Search..." aria-label="Search reports" />
+          <div class="date-range-filter">
+            <button type="button" class="date-range-trigger" id="date-range-trigger" aria-expanded="false" aria-haspopup="dialog">
+              Date
+            </button>
+            <div class="date-range-popover" id="date-range-popover" hidden role="dialog" aria-label="Select date range">
+              <label class="date-range-field">
+                <span>Start</span>
+                <input type="date" id="date-range-start" />
+              </label>
+              <label class="date-range-field">
+                <span>End</span>
+                <input type="date" id="date-range-end" />
+              </label>
+              <div class="date-range-actions">
+                <button type="button" class="date-range-apply" id="date-range-apply">Apply</button>
+              </div>
+            </div>
+          </div>
+          <select id="filter-issue-type" class="filter-issue-type" aria-label="Issue Type">
+            <option value="">Issue Type</option>
           </select>
-          <select>
-            <option>Type</option>
-            <option>Television #10</option>
-            <option>Computer #20</option>
-            <option>Microscope #2</option>
+          <select id="filter-status" class="filter-status" aria-label="Status">
+            <option value="">Status</option>
+            <option value="open">Open</option>
+            <option value="in progress">In Progress</option>
+            <option value="resolved">Resolved</option>
           </select>
-          <select>
-            <option>Room</option>
-            <option>R810</option>
-            <option>R806</option>
-            <option>R823</option>
-          </select>
-          <select>
-            <option>Status</option>
-            <option>In Progress</option>
-            <option>Open</option>
-            <option>Resolved</option>
-          </select>
-          <button type="button" class="clear-btn">Clear</button>
-          <button type="button" class="sort-btn" aria-label="Sort">&#8593;</button>
-          <button type="button" class="menu-btn" aria-label="List menu">&#9776;</button>
+          <button type="button" class="clear-btn" aria-label="Clear filters">Clear</button>
+          <div class="sort-menu-wrap">
+            <button type="button" class="menu-btn sort-menu-btn" id="sort-menu-btn" aria-label="Sort" aria-expanded="false" aria-haspopup="menu">&#9776;</button>
+            <div class="sort-menu-popover" id="sort-menu-popover" hidden role="menu">
+              <button type="button" role="menuitem" data-sort="date-desc">Date (Newest → Oldest)</button>
+              <button type="button" role="menuitem" data-sort="date-asc">Date (Oldest → Newest)</button>
+              <button type="button" role="menuitem" data-sort="room-asc">Room Number (Ascending)</button>
+              <button type="button" role="menuitem" data-sort="room-desc">Room Number (Descending)</button>
+              <button type="button" role="menuitem" data-sort="issue-asc">Issue Type (A–Z)</button>
+              <button type="button" role="menuitem" data-sort="issue-desc">Issue Type (Z–A)</button>
+            </div>
+          </div>
         </div>
 
         <div class="reports-head">
@@ -232,6 +245,7 @@
   <script src="../../assets/js/report-form.js"></script>
   <script src="../../assets/js/system-status.js"></script>
   <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/user-menu.js"></script>
   <script src="../../assets/js/navigation.js"></script>
 </body>
 </html>

@@ -65,6 +65,9 @@ function mapReportRow(row) {
     description: row.description,
     photoPath: row.photo_path,
     date: formatReportDate(row.report_date),
+    reportDateIso: row.report_date
+      ? new Date(row.report_date).toISOString().slice(0, 10)
+      : "",
     time: formatReportTime(row.report_date),
     submittedBy: `${row.first_name} ${row.last_name}`.trim(),
     studentNo: String(row.id_number),

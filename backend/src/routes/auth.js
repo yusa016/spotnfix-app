@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../db");
 const { logActivity } = require("../utils");
+const { authRequired } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -146,6 +147,46 @@ router.post("/reset-password", async (req, res) => {
   } catch (error) {
     console.error("Reset password error:", error);
     return res.status(500).json({ error: "Password reset failed." });
+  }
+});
+
+router.delete("/account", authRequired, async (req, res) => {
+  const connection = await pool.getConnection();
+  try {
+    const idNumber = Number(req.body.idNumber);
+    if (!idNumber) {
+      return res.status(400).json({ error: "Student number is required." });
+    }
+
+    if (Number(req.user.idNumber) !== idNumber) {
+      return res.status(403).json({ error: "Student number does not match your account." });
+    }
+
+    const userId = req.user.userId;
+    await connection.beginTransaction();
+
+    const [reportRows] = await connection.query(
+      "SELECT report_id FROM tbl_issue_reports WHERE user_id = ?",
+      [userId]
+    );
+    const reportIds = reportRows.map((row) => row.report_id);
+
+    if (reportIds.length > 0) {
+      await connection.query("DELETE FROM tbl_maintenance_tasks WHERE report_id IN (?)", [reportIds]);
+    }
+    await connection.query("DELETE FROM tbl_maintenance_tasks WHERE assigned_to = ?", [userId]);
+    await connection.query("DELETE FROM tbl_issue_reports WHERE user_id = ?", [userId]);
+    await connection.query("DELETE FROM tbl_activity_logs WHERE user_id = ?", [userId]);
+    await connection.query("DELETE FROM tbl_users WHERE user_id = ?", [userId]);
+
+    await connection.commit();
+    return res.json({ message: "Account deleted successfully." });
+  } catch (error) {
+    await connection.rollback();
+    console.error("Delete account error:", error);
+    return res.status(500).json({ error: "Failed to delete account." });
+  } finally {
+    connection.release();
   }
 });
 

@@ -77,6 +77,10 @@
     document.querySelectorAll('[data-nav-screen="report"]').forEach((link) => {
       link.classList.toggle("spotnfix-hide-for-admin", admin);
     });
+
+    document.querySelectorAll("[data-nav-track]").forEach((link) => {
+      link.classList.toggle("spotnfix-hide-for-user", !admin);
+    });
   }
 
   function requireAuth(options = {}) {

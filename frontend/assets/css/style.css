@@ -779,7 +779,8 @@ body.modal-open {
 }
 
 .reports-search,
-.reports-filters select {
+.reports-filters select,
+.date-range-trigger {
   width: 100%;
   height: 36px;
   border: 1px solid #dedede;
@@ -787,10 +788,89 @@ body.modal-open {
   padding: 0 10px;
   font-size: 15px;
   color: #444444;
+  background: #ffffff;
+}
+
+.date-range-filter,
+.sort-menu-wrap {
+  position: relative;
+}
+
+.date-range-trigger {
+  text-align: left;
+  cursor: pointer;
+}
+
+.date-range-popover,
+.sort-menu-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  min-width: 220px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #dedede;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.date-range-field {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #555555;
+}
+
+.date-range-field input {
+  height: 36px;
+  border: 1px solid #dedede;
+  border-radius: 8px;
+  padding: 0 8px;
+  font: inherit;
+}
+
+.date-range-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.date-range-apply {
+  border: 0;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #ffffff;
+  padding: 8px 12px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.sort-menu-popover {
+  min-width: 240px;
+  padding: 6px;
+}
+
+.sort-menu-popover button {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  color: #444444;
+}
+
+.sort-menu-popover button:hover,
+.sort-menu-popover button.sort-option-active {
+  background: #f2f2f2;
+  color: var(--primary);
 }
 
 .clear-btn,
-.sort-btn,
 .menu-btn {
   border: 0;
   background: transparent;
@@ -1089,7 +1169,8 @@ body.modal-open {
 .spotnfix-user-admin .submit-report-btn,
 .spotnfix-user-admin #open-home-report-modal,
 .spotnfix-user-admin #open-report-modal,
-.spotnfix-hide-for-admin {
+.spotnfix-hide-for-admin,
+.spotnfix-hide-for-user {
   display: none !important;
 }
 
@@ -2120,4 +2201,151 @@ body.has-spotnfix-status .site-header {
   .contacts-inbox-layout {
     grid-template-columns: 1fr;
   }
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  min-width: 240px;
+  padding: 8px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #dedede;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.user-menu-header {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px 10px;
+  border-bottom: 1px solid #ececec;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #666666;
+}
+
+.user-menu-header strong {
+  color: #222222;
+  font-size: 14px;
+}
+
+.user-menu-dropdown a,
+.user-menu-dropdown button {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  color: #444444;
+  text-decoration: none;
+}
+
+.user-menu-dropdown a:hover,
+.user-menu-dropdown button:hover {
+  background: #f2f2f2;
+  color: var(--primary);
+}
+
+.user-menu-danger {
+  color: #a12622 !important;
+}
+
+.profile-page {
+  max-width: 720px;
+  margin: 32px auto;
+  padding: 0 16px 48px;
+}
+
+.profile-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.08);
+}
+
+.profile-card dl {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 12px 16px;
+  margin: 0;
+}
+
+.profile-card dt {
+  font-weight: 600;
+  color: #555555;
+}
+
+.profile-card dd {
+  margin: 0;
+  color: #222222;
+}
+
+.delete-account-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 16px;
+}
+
+.delete-account-modal {
+  width: min(100%, 420px);
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+}
+
+.delete-account-warning {
+  color: #666666;
+  line-height: 1.5;
+}
+
+.delete-account-label {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 14px;
+}
+
+.delete-account-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.delete-account-cancel,
+.delete-account-submit {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.delete-account-cancel {
+  background: #ececec;
+  color: #444444;
+}
+
+.delete-account-submit {
+  background: #a12622;
+  color: #ffffff;
+}
+
+.delete-account-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

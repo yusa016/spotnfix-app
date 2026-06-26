@@ -91,6 +91,12 @@
         body: JSON.stringify(payload),
       });
     },
+    deleteAccount(idNumber) {
+      return request("/auth/account", {
+        method: "DELETE",
+        body: JSON.stringify({ idNumber }),
+      });
+    },
     getReports(filters = {}) {
       const params = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {

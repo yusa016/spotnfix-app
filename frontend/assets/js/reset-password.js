@@ -7,6 +7,20 @@ const resetError = document.querySelector("#reset-error");
 const resetSuccess = document.querySelector("#reset-success");
 
 if (resetForm && resetEmail && resetIdNumber && resetPassword && resetConfirm) {
+  const params = new URLSearchParams(window.location.search);
+  const emailParam = params.get("email");
+  const loggedInUser = window.SpotnFixAPI?.getUser?.();
+
+  if (emailParam) {
+    resetEmail.value = emailParam.toLowerCase();
+  } else if (loggedInUser?.email) {
+    resetEmail.value = loggedInUser.email;
+  }
+
+  if (loggedInUser?.idNumber) {
+    resetIdNumber.value = loggedInUser.idNumber;
+  }
+
   resetForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 

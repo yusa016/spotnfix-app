@@ -10,6 +10,12 @@ function applyContactNavForAdmin() {
 }
 
 function updateUserNav() {
+  applyContactNavForAdmin();
+  if (window.SpotnFixUserMenu) {
+    SpotnFixUserMenu.updateUserMenu();
+    return;
+  }
+
   if (!userIconLink || !window.SpotnFixAPI) return;
 
   const user = SpotnFixAPI.getUser();
@@ -19,22 +25,6 @@ function updateUserNav() {
     userIconLink.setAttribute("aria-label", `Logged in as ${user.firstName}`);
     userIconLink.title = `${user.firstName} ${user.lastName} (${user.role})`;
     userIconLink.href = isAuthPage ? "../system/reports.html#track" : userIconLink.getAttribute("data-default-href") || userIconLink.href;
-
-    let logoutBtn = document.querySelector("#spotnfix-logout-btn");
-    if (!logoutBtn && mainNav) {
-      logoutBtn = document.createElement("button");
-      logoutBtn.id = "spotnfix-logout-btn";
-      logoutBtn.type = "button";
-      logoutBtn.className = "spotnfix-logout-btn";
-      logoutBtn.textContent = "Log out";
-      logoutBtn.addEventListener("click", () => {
-        if (window.SpotnFixAuth) SpotnFixAuth.logout();
-      });
-      mainNav.appendChild(logoutBtn);
-    }
-  } else if (mainNav) {
-    const logoutBtn = document.querySelector("#spotnfix-logout-btn");
-    if (logoutBtn) logoutBtn.remove();
   }
 
   applyContactNavForAdmin();

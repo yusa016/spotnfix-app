@@ -3,12 +3,86 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Profile | Project Prototype</title>
+  <title>Profile | Cardinal's SpotN'Fix</title>
   <link rel="stylesheet" href="../../assets/css/style.css" />
+  <link rel="stylesheet" href="../../assets/css/responsive.css" />
 </head>
 <body>
-  <main>
-    <h1>Profile Page</h1>
+  <header class="site-header">
+    <a href="../../index.html" class="logo">
+      <img src="../../assets/images/logo.png" alt="Cardinal's SpotN'Fix logo" />
+    </a>
+    <div class="header-controls">
+      <button
+        type="button"
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="primary-navigation"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <a href="../auth/login.html" class="user-icon" aria-label="Login">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </svg>
+      </a>
+    </div>
+    <nav class="main-nav" id="primary-navigation">
+      <a href="../../index.html">Home</a>
+      <a href="../../about.html">About</a>
+      <a href="../../features.html">Features</a>
+      <a href="reports.html">Report Issue</a>
+      <a href="reports.html#track" data-nav-track>Track Reports</a>
+      <a href="../../contact.html" data-nav-contact>Contact us</a>
+    </nav>
+  </header>
+
+  <main class="profile-page">
+    <section class="profile-card">
+      <h1>Profile Information</h1>
+      <dl id="profile-details">
+        <dt>First Name</dt><dd id="profile-first-name">—</dd>
+        <dt>Last Name</dt><dd id="profile-last-name">—</dd>
+        <dt>Email</dt><dd id="profile-email">—</dd>
+        <dt>Student / ID Number</dt><dd id="profile-id-number">—</dd>
+        <dt>Role</dt><dd id="profile-role">—</dd>
+      </dl>
+    </section>
+
+    <section class="profile-card" id="account-settings" style="margin-top: 16px;">
+      <h2>Account Settings</h2>
+      <p>Update your password or manage account options from the profile menu in the header.</p>
+      <p><a href="../auth/reset-password.html" id="profile-change-password-link">Change Password</a></p>
+    </section>
   </main>
+
+  <script src="../../assets/js/config.js"></script>
+  <script src="../../assets/js/api.js"></script>
+  <script src="../../assets/js/auth-helper.js"></script>
+  <script src="../../assets/js/system-status.js"></script>
+  <script src="../../assets/js/user-menu.js"></script>
+  <script src="../../assets/js/navigation.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (!SpotnFixAuth.requireAuth({ message: "Please log in to view your profile." })) return;
+
+      const user = SpotnFixAPI.getUser();
+      if (!user) return;
+
+      document.getElementById("profile-first-name").textContent = user.firstName || "—";
+      document.getElementById("profile-last-name").textContent = user.lastName || "—";
+      document.getElementById("profile-email").textContent = user.email || "—";
+      document.getElementById("profile-id-number").textContent = user.idNumber || "—";
+      document.getElementById("profile-role").textContent = user.role || "—";
+
+      const changePasswordLink = document.getElementById("profile-change-password-link");
+      if (changePasswordLink && user.email) {
+        changePasswordLink.href = `../auth/reset-password.html?email=${encodeURIComponent(user.email)}`;
+      }
+    });
+  </script>
 </body>
 </html>

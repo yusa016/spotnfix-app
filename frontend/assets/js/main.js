@@ -56,8 +56,16 @@ if (reportsPage) {
   const switchButtons = document.querySelectorAll("[data-switch-screen]");
   const reportList = document.querySelector("#reports-list");
   const searchInput = document.querySelector(".reports-search");
-  const filterSelects = document.querySelectorAll(".reports-filters select");
+  const issueTypeSelect = document.querySelector("#filter-issue-type");
+  const statusSelect = document.querySelector("#filter-status");
   const clearButton = document.querySelector(".clear-btn");
+  const dateRangeTrigger = document.querySelector("#date-range-trigger");
+  const dateRangePopover = document.querySelector("#date-range-popover");
+  const dateRangeStart = document.querySelector("#date-range-start");
+  const dateRangeEnd = document.querySelector("#date-range-end");
+  const dateRangeApply = document.querySelector("#date-range-apply");
+  const sortMenuBtn = document.querySelector("#sort-menu-btn");
+  const sortMenuPopover = document.querySelector("#sort-menu-popover");
   const floorButtons = document.querySelectorAll(".floor-btn");
   const modalBackdrop = document.querySelector("#report-modal-backdrop");
   const modalDialog = document.querySelector(".report-modal");
@@ -92,6 +100,88 @@ if (reportsPage) {
   let selectedFloor = initialActiveFloorButton?.dataset.floor || DEFAULT_FLOOR;
   let reports = [];
   let analytics = { total: 0, open: 0, inProgress: 0, resolved: 0 };
+  let sortOrder = "date-desc";
+  let dateRange = { start: "", end: "" };
+
+  const DEFAULT_SORT = "date-desc";
+
+  const parseIsoDate = (iso) => {
+    if (!iso) return null;
+    const [year, month, day] = iso.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const formatRangeLabel = (iso) => {
+    const date = parseIsoDate(iso);
+    if (!date) return "";
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  const updateDateRangeTriggerLabel = () => {
+    if (!dateRangeTrigger) return;
+    if (!dateRange.start && !dateRange.end) {
+      dateRangeTrigger.textContent = "Date";
+      return;
+    }
+    if (dateRange.start && dateRange.end && dateRange.start !== dateRange.end) {
+      dateRangeTrigger.textContent = `${formatRangeLabel(dateRange.start)} – ${formatRangeLabel(dateRange.end)}`;
+      return;
+    }
+    dateRangeTrigger.textContent = formatRangeLabel(dateRange.start || dateRange.end);
+  };
+
+  const closePopover = (popover, trigger) => {
+    if (!popover) return;
+    popover.hidden = true;
+    trigger?.setAttribute("aria-expanded", "false");
+  };
+
+  const togglePopover = (popover, trigger) => {
+    if (!popover || !trigger) return;
+    const willOpen = popover.hidden;
+    closePopover(sortMenuPopover, sortMenuBtn);
+    closePopover(dateRangePopover, dateRangeTrigger);
+    popover.hidden = !willOpen;
+    trigger.setAttribute("aria-expanded", willOpen ? "true" : "false");
+  };
+
+  const compareRoom = (a, b) => {
+    const numA = Number.parseInt(String(a).replace(/\D/g, ""), 10);
+    const numB = Number.parseInt(String(b).replace(/\D/g, ""), 10);
+    if (!Number.isNaN(numA) && !Number.isNaN(numB) && numA !== numB) return numA - numB;
+    return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" });
+  };
+
+  const applySort = (list) => {
+    const sorted = [...list];
+    sorted.sort((a, b) => {
+      switch (sortOrder) {
+        case "date-asc":
+          return (a.reportDateIso || "").localeCompare(b.reportDateIso || "") || a.reportId - b.reportId;
+        case "room-asc":
+          return compareRoom(a.room, b.room);
+        case "room-desc":
+          return compareRoom(b.room, a.room);
+        case "issue-asc":
+          return (a.issueType || "").localeCompare(b.issueType || "", undefined, { sensitivity: "base" });
+        case "issue-desc":
+          return (b.issueType || "").localeCompare(a.issueType || "", undefined, { sensitivity: "base" });
+        case "date-desc":
+        default:
+          return (b.reportDateIso || "").localeCompare(a.reportDateIso || "") || b.reportId - a.reportId;
+      }
+    });
+    return sorted;
+  };
+
+  const getRoleScopedReports = () => {
+    if (currentUser()?.role === "admin") return reports;
+    const userId = currentUser()?.userId;
+    if (userId) {
+      return reports.filter((report) => report.userId === userId && report.status !== "resolved");
+    }
+    return reports;
+  };
 
   const isDesktop = () => window.innerWidth >= DESKTOP_BREAKPOINT;
   const getSelectedReport = () => reports.find((r) => r.id === selectedReportId) || null;
@@ -263,45 +353,97 @@ if (reportsPage) {
 
   const getFilters = () => ({
     search: searchInput?.value.trim().toLowerCase() || "",
-    date: filterSelects[0]?.value.toLowerCase() || "",
-    type: filterSelects[1]?.value.toLowerCase() || "",
-    room: filterSelects[2]?.value.toLowerCase() || "",
-    status: filterSelects[3]?.value.toLowerCase() || "",
+    issueType: issueTypeSelect?.value.trim().toLowerCase() || "",
+    status: statusSelect?.value.trim().toLowerCase() || "",
   });
+
+  const matchesDateRange = (report) => {
+    if (!dateRange.start && !dateRange.end) return true;
+    const reportDate = parseIsoDate(report.reportDateIso);
+    if (!reportDate) return false;
+
+    const start = dateRange.start ? parseIsoDate(dateRange.start) : null;
+    const end = dateRange.end ? parseIsoDate(dateRange.end) : null;
+
+    if (start && end) {
+      return reportDate >= start && reportDate <= end;
+    }
+    const single = start || end;
+    return (
+      reportDate.getFullYear() === single.getFullYear() &&
+      reportDate.getMonth() === single.getMonth() &&
+      reportDate.getDate() === single.getDate()
+    );
+  };
 
   const matchesFilter = (report, filters) => {
     const joined = `${report.room} ${report.type} ${report.issueType} ${report.date} ${report.description} ${report.status}`.toLowerCase();
     if (filters.search && !joined.includes(filters.search)) return false;
-    if (filters.date && filters.date !== "date" && report.date.toLowerCase() !== filters.date) return false;
-    if (filters.type && filters.type !== "type" && !joined.includes(filters.type)) return false;
-    if (filters.room && filters.room !== "room" && report.room.toLowerCase() !== filters.room) return false;
-    if (filters.status && filters.status !== "status" && report.status.toLowerCase() !== filters.status) return false;
+    if (!matchesDateRange(report)) return false;
+    if (filters.issueType && (report.issueType || "").toLowerCase() !== filters.issueType) return false;
+    if (filters.status && report.status.toLowerCase() !== filters.status) return false;
     return true;
   };
 
+  const hasActiveFilters = () => {
+    const filters = getFilters();
+    return Boolean(
+      filters.search ||
+        filters.issueType ||
+        filters.status ||
+        dateRange.start ||
+        dateRange.end ||
+        sortOrder !== DEFAULT_SORT
+    );
+  };
+
   const updateFilterOptions = () => {
-    if (filterSelects.length < 4) return;
-    const dates = [...new Set(reports.map((r) => r.date))];
-    const types = [...new Set(reports.map((r) => `${r.type} (${r.issueType})`))];
-    const rooms = [...new Set(reports.map((r) => r.room))];
-    const statuses = ["open", "in progress", "resolved"];
+    const scoped = getRoleScopedReports();
+    const issueTypes = [...new Set(scoped.map((r) => r.issueType).filter(Boolean))].sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "base" })
+    );
 
-    const fill = (select, label, values) => {
-      select.innerHTML = `<option value="">${label}</option>` + values.map((v) => `<option value="${v}">${v}</option>`).join("");
-    };
+    if (issueTypeSelect) {
+      const current = issueTypeSelect.value;
+      issueTypeSelect.innerHTML =
+        `<option value="">Issue Type</option>` +
+        issueTypes.map((type) => `<option value="${type}">${type}</option>`).join("");
+      if ([...issueTypeSelect.options].some((option) => option.value === current)) {
+        issueTypeSelect.value = current;
+      }
+    }
 
-    fill(filterSelects[0], "Date", dates);
-    fill(filterSelects[1], "Type", types);
-    fill(filterSelects[2], "Room", rooms);
-    fill(filterSelects[3], "Status", statuses.map((s) => s.charAt(0).toUpperCase() + s.slice(1)));
+    if (statusSelect) {
+      const isAdmin = currentUser()?.role === "admin";
+      statusSelect.innerHTML = isAdmin
+        ? `<option value="">Status</option>
+           <option value="open">Open</option>
+           <option value="in progress">In Progress</option>
+           <option value="resolved">Resolved</option>`
+        : `<option value="">Status</option>
+           <option value="open">Open</option>
+           <option value="in progress">In Progress</option>`;
+    }
+  };
+
+  const getVisibleReports = () => {
+    const filters = getFilters();
+    return applySort(
+      getRoleScopedReports()
+        .filter((report) => report.floor === selectedFloor)
+        .filter((report) => matchesFilter(report, filters))
+    );
   };
 
   const renderReports = () => {
     if (!reportList) return;
-    const visible = reports.filter((r) => r.floor === selectedFloor).filter((r) => matchesFilter(r, getFilters()));
+    const visible = getVisibleReports();
 
     if (!visible.length) {
-      reportList.innerHTML = `<p class="reports-empty">No reports on ${selectedFloor} yet.</p>`;
+      const message = hasActiveFilters()
+        ? "No reports match your filters."
+        : `No reports on ${selectedFloor} yet.`;
+      reportList.innerHTML = `<p class="reports-empty">${message}</p>`;
       return;
     }
 
@@ -339,9 +481,10 @@ if (reportsPage) {
 
   const updateFloorCounts = () => {
     const floors = ["8th Floor", "7th Floor", "6th Floor", "5th Floor", "4th Floor", "3rd Floor", "2nd Floor", "1st Floor"];
+    const scoped = getRoleScopedReports();
     floors.forEach((floor, index) => {
       const floorNum = 8 - index;
-      const count = reports.filter((r) => r.floor === floor && r.status !== "resolved").length;
+      const count = scoped.filter((r) => r.floor === floor && r.status !== "resolved").length;
       const countEl = document.querySelector(`#floor-count-${floorNum}`);
       if (!countEl) return;
       countEl.textContent = String(count);
@@ -461,13 +604,70 @@ if (reportsPage) {
     history.replaceState(null, "", `${window.location.pathname}#track`);
   });
 
-  searchInput?.addEventListener("input", renderReports);
-  filterSelects.forEach((select) => select.addEventListener("change", renderReports));
-  clearButton?.addEventListener("click", () => {
+  const resetFilters = () => {
     if (searchInput) searchInput.value = "";
-    filterSelects.forEach((select) => { select.selectedIndex = 0; });
+    if (issueTypeSelect) issueTypeSelect.selectedIndex = 0;
+    if (statusSelect) statusSelect.selectedIndex = 0;
+    dateRange = { start: "", end: "" };
+    if (dateRangeStart) dateRangeStart.value = "";
+    if (dateRangeEnd) dateRangeEnd.value = "";
+    updateDateRangeTriggerLabel();
+    sortOrder = DEFAULT_SORT;
+    sortMenuPopover?.querySelectorAll("[data-sort]").forEach((button) => {
+      button.classList.toggle("sort-option-active", button.dataset.sort === DEFAULT_SORT);
+    });
+    closePopover(dateRangePopover, dateRangeTrigger);
+    closePopover(sortMenuPopover, sortMenuBtn);
+    renderReports();
+  };
+
+  searchInput?.addEventListener("input", renderReports);
+  issueTypeSelect?.addEventListener("change", renderReports);
+  statusSelect?.addEventListener("change", renderReports);
+  clearButton?.addEventListener("click", resetFilters);
+
+  dateRangeTrigger?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    togglePopover(dateRangePopover, dateRangeTrigger);
+  });
+
+  dateRangeApply?.addEventListener("click", () => {
+    dateRange = {
+      start: dateRangeStart?.value || "",
+      end: dateRangeEnd?.value || "",
+    };
+    updateDateRangeTriggerLabel();
+    closePopover(dateRangePopover, dateRangeTrigger);
     renderReports();
   });
+
+  sortMenuBtn?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    togglePopover(sortMenuPopover, sortMenuBtn);
+  });
+
+  sortMenuPopover?.querySelectorAll("[data-sort]").forEach((button) => {
+    button.classList.toggle("sort-option-active", button.dataset.sort === sortOrder);
+    button.addEventListener("click", () => {
+      sortOrder = button.dataset.sort || DEFAULT_SORT;
+      sortMenuPopover.querySelectorAll("[data-sort]").forEach((item) => {
+        item.classList.toggle("sort-option-active", item.dataset.sort === sortOrder);
+      });
+      closePopover(sortMenuPopover, sortMenuBtn);
+      renderReports();
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".date-range-filter")) {
+      closePopover(dateRangePopover, dateRangeTrigger);
+    }
+    if (!event.target.closest(".sort-menu-wrap")) {
+      closePopover(sortMenuPopover, sortMenuBtn);
+    }
+  });
+
+  updateDateRangeTriggerLabel();
 
   openModalButton?.addEventListener("click", () => {
     if (createError) createError.textContent = "";
