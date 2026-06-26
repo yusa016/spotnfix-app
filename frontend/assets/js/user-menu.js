@@ -1,5 +1,6 @@
 (function () {
   const userIconLink = document.querySelector(".user-icon");
+  let deleteAccountUser = null;
 
   function profilePath() {
     if (window.location.pathname.includes("/pages/system/")) return "profile.html";
@@ -65,42 +66,58 @@
     });
   }
 
-  function openDeleteAccountModal(user) {
+  function closeDeleteAccountModal() {
+    const backdrop = document.querySelector("#delete-account-backdrop");
+    if (!backdrop) return;
+    backdrop.hidden = true;
+    document.body.classList.remove("modal-open");
+    document.body.style.top = "";
+    document.body.style.width = "";
+  }
+
+  function ensureDeleteAccountModal() {
     let backdrop = document.querySelector("#delete-account-backdrop");
-    if (!backdrop) {
-      backdrop = document.createElement("div");
-      backdrop.id = "delete-account-backdrop";
-      backdrop.className = "delete-account-backdrop";
-      backdrop.hidden = true;
-      backdrop.innerHTML = `
-        <section class="delete-account-modal" role="dialog" aria-modal="true" aria-labelledby="delete-account-title" tabindex="-1">
-          <button type="button" class="modal-close" id="close-delete-account" aria-label="Close">&times;</button>
-          <h2 id="delete-account-title">Delete Account</h2>
-          <p class="delete-account-warning">
-            This action is permanent. Your account and submitted reports will be removed and cannot be recovered.
-          </p>
-          <label class="delete-account-label" for="delete-account-id">Enter your Student Number to confirm</label>
-          <input class="modal-text-input" id="delete-account-id" type="text" inputmode="numeric" autocomplete="off" />
-          <p class="create-report-error" id="delete-account-error" aria-live="polite"></p>
-          <div class="delete-account-actions">
-            <button type="button" class="delete-account-cancel" id="cancel-delete-account">Cancel</button>
-            <button type="button" class="delete-account-submit" id="confirm-delete-account" disabled>Delete Account</button>
-          </div>
-        </section>
-      `;
-      document.body.appendChild(backdrop);
+    if (backdrop) return backdrop;
 
-      backdrop.querySelector("#close-delete-account")?.addEventListener("click", () => {
-        backdrop.hidden = true;
-      });
-      backdrop.querySelector("#cancel-delete-account")?.addEventListener("click", () => {
-        backdrop.hidden = true;
-      });
-      backdrop.addEventListener("click", (event) => {
-        if (event.target === backdrop) backdrop.hidden = true;
-      });
-    }
+    backdrop = document.createElement("div");
+    backdrop.id = "delete-account-backdrop";
+    backdrop.className = "delete-account-backdrop";
+    backdrop.hidden = true;
+    backdrop.innerHTML = `
+      <section class="delete-account-modal" role="dialog" aria-modal="true" aria-labelledby="delete-account-title" tabindex="-1">
+        <button type="button" class="modal-close" id="close-delete-account" aria-label="Close">&times;</button>
+        <h2 id="delete-account-title">Delete Account</h2>
+        <p class="delete-account-warning">
+          This action is permanent. Your account and submitted reports will be removed and cannot be recovered.
+        </p>
+        <label class="delete-account-label" for="delete-account-id">Enter your Student Number to confirm</label>
+        <input class="modal-text-input" id="delete-account-id" type="text" inputmode="numeric" autocomplete="off" />
+        <p class="create-report-error" id="delete-account-error" aria-live="polite"></p>
+        <div class="delete-account-actions">
+          <button type="button" class="delete-account-cancel" id="cancel-delete-account">Cancel</button>
+          <button type="button" class="delete-account-submit" id="confirm-delete-account" disabled>Delete Account</button>
+        </div>
+      </section>
+    `;
+    document.body.appendChild(backdrop);
 
+    backdrop.addEventListener("click", (event) => {
+      if (event.target === backdrop) closeDeleteAccountModal();
+    });
+
+    backdrop.querySelector(".delete-account-modal")?.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+
+    backdrop.querySelector("#close-delete-account")?.addEventListener("click", closeDeleteAccountModal);
+    backdrop.querySelector("#cancel-delete-account")?.addEventListener("click", closeDeleteAccountModal);
+
+    return backdrop;
+  }
+
+  function openDeleteAccountModal(user) {
+    deleteAccountUser = user;
+    const backdrop = ensureDeleteAccountModal();
     const idInput = backdrop.querySelector("#delete-account-id");
     const errorEl = backdrop.querySelector("#delete-account-error");
     const confirmBtn = backdrop.querySelector("#confirm-delete-account");
@@ -109,43 +126,53 @@
     if (errorEl) errorEl.textContent = "";
     if (confirmBtn) confirmBtn.disabled = true;
 
-    const validate = () => {
-      const entered = Number(String(idInput?.value || "").trim());
-      const matches = entered > 0 && entered === Number(user.idNumber);
-      if (confirmBtn) confirmBtn.disabled = !matches;
-      if (errorEl && idInput?.value && !matches) {
-        errorEl.textContent = "Student number does not match your account.";
-      } else if (errorEl) {
-        errorEl.textContent = "";
-      }
-    };
+    if (idInput && !idInput._spotnfixValidateBound) {
+      idInput._spotnfixValidateBound = true;
+      idInput.addEventListener("input", () => {
+        const user = deleteAccountUser;
+        if (!user) return;
+        const entered = String(idInput.value || "").trim();
+        const expected = String(user.idNumber ?? "").trim();
+        const matches = entered.length > 0 && entered === expected;
+        const currentConfirm = backdrop.querySelector("#confirm-delete-account");
+        if (currentConfirm) currentConfirm.disabled = !matches;
+        if (errorEl && entered && !matches) {
+          errorEl.textContent = "Student number does not match your account.";
+        } else if (errorEl) {
+          errorEl.textContent = "";
+        }
+      });
+    }
 
-    idInput?.removeEventListener("input", idInput._spotnfixValidate);
-    idInput._spotnfixValidate = validate;
-    idInput?.addEventListener("input", validate);
+    if (confirmBtn && !confirmBtn._spotnfixDeleteBound) {
+      confirmBtn._spotnfixDeleteBound = true;
+      confirmBtn.addEventListener("click", async () => {
+        const user = deleteAccountUser;
+        const entered = String(idInput?.value || "").trim();
+        const expected = String(user?.idNumber ?? "").trim();
+        if (entered !== expected) {
+          if (errorEl) errorEl.textContent = "Student number does not match your account.";
+          return;
+        }
 
-    confirmBtn?.replaceWith(confirmBtn.cloneNode(true));
-    const freshConfirm = backdrop.querySelector("#confirm-delete-account");
-    freshConfirm?.addEventListener("click", async () => {
-      const idNumber = Number(String(idInput?.value || "").trim());
-      if (idNumber !== Number(user.idNumber)) {
-        if (errorEl) errorEl.textContent = "Student number does not match your account.";
-        return;
-      }
+        confirmBtn.disabled = true;
+        if (errorEl) errorEl.textContent = "Deleting account...";
 
-      freshConfirm.disabled = true;
-      if (errorEl) errorEl.textContent = "Deleting account...";
+        try {
+          await SpotnFixAPI.deleteAccount(Number(entered));
+          SpotnFixAPI.clearSession();
+          window.location.href = loginPath();
+        } catch (error) {
+          if (errorEl) errorEl.textContent = error.message || "Failed to delete account.";
+          confirmBtn.disabled = false;
+        }
+      });
+    }
 
-      try {
-        await SpotnFixAPI.deleteAccount(idNumber);
-        SpotnFixAPI.clearSession();
-        window.location.href = loginPath();
-      } catch (error) {
-        if (errorEl) errorEl.textContent = error.message || "Failed to delete account.";
-        freshConfirm.disabled = false;
-      }
-    });
-
+    const lockedScrollY = window.scrollY || 0;
+    document.body.classList.add("modal-open");
+    document.body.style.top = `-${lockedScrollY}px`;
+    document.body.style.width = "100%";
     backdrop.hidden = false;
     backdrop.querySelector(".delete-account-modal")?.focus();
     closeMenu(document.querySelector("#spotnfix-user-menu"), userIconLink);
@@ -207,8 +234,7 @@
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeMenu(document.querySelector("#spotnfix-user-menu"), userIconLink);
-      const backdrop = document.querySelector("#delete-account-backdrop");
-      if (backdrop && !backdrop.hidden) backdrop.hidden = true;
+      closeDeleteAccountModal();
     }
   });
 

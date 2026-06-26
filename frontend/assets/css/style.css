@@ -2293,11 +2293,15 @@ body.has-spotnfix-status .site-header {
 .delete-account-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 400;
   display: grid;
   place-items: center;
   background: rgba(0, 0, 0, 0.45);
   padding: 16px;
+}
+
+.delete-account-backdrop[hidden] {
+  display: none !important;
 }
 
 .delete-account-modal {
@@ -2306,6 +2310,8 @@ body.has-spotnfix-status .site-header {
   border-radius: 12px;
   padding: 24px;
   position: relative;
+  z-index: 401;
+  pointer-events: auto;
 }
 
 .delete-account-warning {
