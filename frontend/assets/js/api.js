@@ -28,6 +28,21 @@
     }
   }
 
+  function readTokenPayload() {
+    const token = getToken();
+    if (!token) return null;
+    try {
+      const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+      return JSON.parse(atob(base64));
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function normalizeIdNumber(value) {
+    return String(value ?? "").replace(/\D/g, "").trim();
+  }
+
   async function request(path, options = {}) {
     const headers = { ...(options.headers || {}) };
     const isFormData = options.body instanceof FormData;
@@ -91,10 +106,25 @@
         body: JSON.stringify(payload),
       });
     },
+    fetchCurrentUser() {
+      return request("/auth/me").then((user) => {
+        const token = getToken();
+        if (token && user) {
+          setSession(token, user);
+        }
+        return user;
+      });
+    },
+    normalizeIdNumber,
+    resolveAccountIdNumber(user) {
+      const fromUser = normalizeIdNumber(user?.idNumber);
+      if (fromUser) return fromUser;
+      return normalizeIdNumber(readTokenPayload()?.idNumber);
+    },
     deleteAccount(idNumber) {
       return request("/auth/account", {
         method: "DELETE",
-        body: JSON.stringify({ idNumber }),
+        body: JSON.stringify({ idNumber: normalizeIdNumber(idNumber) }),
       });
     },
     getReports(filters = {}) {

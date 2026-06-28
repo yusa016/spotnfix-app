@@ -1,6 +1,7 @@
 (function () {
   const userIconLink = document.querySelector(".user-icon");
   let deleteAccountUser = null;
+  let deleteModalScrollY = 0;
 
   function profilePath() {
     if (window.location.pathname.includes("/pages/system/")) return "profile.html";
@@ -13,6 +14,18 @@
     if (window.location.pathname.includes("/pages/auth/")) return "login.html";
     if (window.location.pathname.includes("/pages/")) return "../auth/login.html";
     return "pages/auth/login.html";
+  }
+
+  function idConfirmLabel(role) {
+    return role === "student"
+      ? "Enter your Student Number to confirm"
+      : "Enter your ID Number to confirm";
+  }
+
+  function idMismatchMessage(role) {
+    return role === "student"
+      ? "Student number does not match your account."
+      : "ID number does not match your account.";
   }
 
   function closeMenu(menu, trigger) {
@@ -62,7 +75,7 @@
     });
 
     menu.querySelector("#spotnfix-menu-delete")?.addEventListener("click", () => {
-      openDeleteAccountModal(user);
+      openDeleteAccountModal();
     });
   }
 
@@ -73,10 +86,67 @@
     document.body.classList.remove("modal-open");
     document.body.style.top = "";
     document.body.style.width = "";
+    window.scrollTo(0, deleteModalScrollY);
+  }
+
+  function getDeleteBackdrop() {
+    return document.querySelector("#delete-account-backdrop");
+  }
+
+  function validateDeleteAccountInput() {
+    const backdrop = getDeleteBackdrop();
+    if (!backdrop || backdrop.hidden) return;
+
+    const user = deleteAccountUser;
+    const idInput = backdrop.querySelector("#delete-account-id");
+    const errorEl = backdrop.querySelector("#delete-account-error");
+    const confirmBtn = backdrop.querySelector("#confirm-delete-account");
+    if (!idInput || !confirmBtn) return;
+
+    const entered = SpotnFixAPI.normalizeIdNumber(idInput.value);
+    const expected = SpotnFixAPI.resolveAccountIdNumber(user);
+    const matches = entered.length > 0 && entered === expected;
+
+    confirmBtn.disabled = !matches;
+    if (errorEl) {
+      errorEl.textContent = entered && !matches ? idMismatchMessage(user?.role) : "";
+    }
+  }
+
+  async function submitDeleteAccount() {
+    const backdrop = getDeleteBackdrop();
+    if (!backdrop || backdrop.hidden) return;
+
+    const user = deleteAccountUser;
+    const idInput = backdrop.querySelector("#delete-account-id");
+    const errorEl = backdrop.querySelector("#delete-account-error");
+    const confirmBtn = backdrop.querySelector("#confirm-delete-account");
+    if (!idInput || !confirmBtn) return;
+
+    const entered = SpotnFixAPI.normalizeIdNumber(idInput.value);
+    const expected = SpotnFixAPI.resolveAccountIdNumber(user);
+
+    if (entered !== expected) {
+      if (errorEl) errorEl.textContent = idMismatchMessage(user?.role);
+      confirmBtn.disabled = true;
+      return;
+    }
+
+    confirmBtn.disabled = true;
+    if (errorEl) errorEl.textContent = "Deleting account...";
+
+    try {
+      await SpotnFixAPI.deleteAccount(entered);
+      SpotnFixAPI.clearSession();
+      window.location.href = loginPath();
+    } catch (error) {
+      if (errorEl) errorEl.textContent = error.message || "Failed to delete account.";
+      confirmBtn.disabled = false;
+    }
   }
 
   function ensureDeleteAccountModal() {
-    let backdrop = document.querySelector("#delete-account-backdrop");
+    let backdrop = getDeleteBackdrop();
     if (backdrop) return backdrop;
 
     backdrop = document.createElement("div");
@@ -84,13 +154,13 @@
     backdrop.className = "delete-account-backdrop";
     backdrop.hidden = true;
     backdrop.innerHTML = `
-      <section class="delete-account-modal" role="dialog" aria-modal="true" aria-labelledby="delete-account-title" tabindex="-1">
+      <section class="delete-account-modal" role="dialog" aria-modal="true" aria-labelledby="delete-account-title">
         <button type="button" class="modal-close" id="close-delete-account" aria-label="Close">&times;</button>
         <h2 id="delete-account-title">Delete Account</h2>
         <p class="delete-account-warning">
           This action is permanent. Your account and submitted reports will be removed and cannot be recovered.
         </p>
-        <label class="delete-account-label" for="delete-account-id">Enter your Student Number to confirm</label>
+        <label class="delete-account-label" for="delete-account-id" id="delete-account-label">Enter your ID Number to confirm</label>
         <input class="modal-text-input" id="delete-account-id" type="text" inputmode="numeric" autocomplete="off" />
         <p class="create-report-error" id="delete-account-error" aria-live="polite"></p>
         <div class="delete-account-actions">
@@ -102,80 +172,58 @@
     document.body.appendChild(backdrop);
 
     backdrop.addEventListener("click", (event) => {
-      if (event.target === backdrop) closeDeleteAccountModal();
+      const target = event.target;
+      if (target === backdrop) {
+        closeDeleteAccountModal();
+        return;
+      }
+      if (target.id === "close-delete-account" || target.id === "cancel-delete-account") {
+        closeDeleteAccountModal();
+        return;
+      }
+      if (target.id === "confirm-delete-account" && !target.disabled) {
+        submitDeleteAccount();
+      }
     });
 
-    backdrop.querySelector(".delete-account-modal")?.addEventListener("click", (event) => {
-      event.stopPropagation();
+    backdrop.addEventListener("input", (event) => {
+      if (event.target.id === "delete-account-id") {
+        validateDeleteAccountInput();
+      }
     });
-
-    backdrop.querySelector("#close-delete-account")?.addEventListener("click", closeDeleteAccountModal);
-    backdrop.querySelector("#cancel-delete-account")?.addEventListener("click", closeDeleteAccountModal);
 
     return backdrop;
   }
 
-  function openDeleteAccountModal(user) {
+  async function openDeleteAccountModal() {
+    let user = SpotnFixAPI.getUser();
+    try {
+      user = await SpotnFixAPI.fetchCurrentUser();
+    } catch (_error) {
+      // Keep cached session user if refresh fails.
+    }
+
+    if (!user) return;
+
     deleteAccountUser = user;
     const backdrop = ensureDeleteAccountModal();
     const idInput = backdrop.querySelector("#delete-account-id");
     const errorEl = backdrop.querySelector("#delete-account-error");
     const confirmBtn = backdrop.querySelector("#confirm-delete-account");
+    const labelEl = backdrop.querySelector("#delete-account-label");
 
+    if (labelEl) labelEl.textContent = idConfirmLabel(user.role);
     if (idInput) idInput.value = "";
     if (errorEl) errorEl.textContent = "";
     if (confirmBtn) confirmBtn.disabled = true;
 
-    if (idInput && !idInput._spotnfixValidateBound) {
-      idInput._spotnfixValidateBound = true;
-      idInput.addEventListener("input", () => {
-        const user = deleteAccountUser;
-        if (!user) return;
-        const entered = String(idInput.value || "").trim();
-        const expected = String(user.idNumber ?? "").trim();
-        const matches = entered.length > 0 && entered === expected;
-        const currentConfirm = backdrop.querySelector("#confirm-delete-account");
-        if (currentConfirm) currentConfirm.disabled = !matches;
-        if (errorEl && entered && !matches) {
-          errorEl.textContent = "Student number does not match your account.";
-        } else if (errorEl) {
-          errorEl.textContent = "";
-        }
-      });
-    }
-
-    if (confirmBtn && !confirmBtn._spotnfixDeleteBound) {
-      confirmBtn._spotnfixDeleteBound = true;
-      confirmBtn.addEventListener("click", async () => {
-        const user = deleteAccountUser;
-        const entered = String(idInput?.value || "").trim();
-        const expected = String(user?.idNumber ?? "").trim();
-        if (entered !== expected) {
-          if (errorEl) errorEl.textContent = "Student number does not match your account.";
-          return;
-        }
-
-        confirmBtn.disabled = true;
-        if (errorEl) errorEl.textContent = "Deleting account...";
-
-        try {
-          await SpotnFixAPI.deleteAccount(Number(entered));
-          SpotnFixAPI.clearSession();
-          window.location.href = loginPath();
-        } catch (error) {
-          if (errorEl) errorEl.textContent = error.message || "Failed to delete account.";
-          confirmBtn.disabled = false;
-        }
-      });
-    }
-
-    const lockedScrollY = window.scrollY || 0;
+    deleteModalScrollY = window.scrollY || 0;
     document.body.classList.add("modal-open");
-    document.body.style.top = `-${lockedScrollY}px`;
+    document.body.style.top = `-${deleteModalScrollY}px`;
     document.body.style.width = "100%";
     backdrop.hidden = false;
-    backdrop.querySelector(".delete-account-modal")?.focus();
     closeMenu(document.querySelector("#spotnfix-user-menu"), userIconLink);
+    idInput?.focus();
   }
 
   function updateUserMenu() {

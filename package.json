@@ -8,6 +8,7 @@
     "start": "node backend/src/server.js",
     "seed": "node backend/src/seed.js",
     "db:setup": "node backend/scripts/import-schema.js && node backend/src/seed.js",
+    "generate:er-pdf": "node scripts/generate-er-pdf.js",
     "dev": "npm run dev --prefix backend"
   },
   "engines": {

@@ -127,7 +127,11 @@ After `npm run seed`:
 
 ## Database tables
 
-Matches your proposal and `spotn_fix.sql`:
+Full schema documentation (PKs, FKs, 3NF): **`DATABASE_SCHEMA.md`**
+
+Canonical DDL: **`backend/sql/spotn_fix.sql`**
+
+Tables in the working system:
 
 - `tbl_users` — students, faculty, admin (+ `password_hash` for login)
 - `tbl_facilities` — equipment by floor/room (+ `floor` column for frontend filters)

@@ -2293,11 +2293,12 @@ body.has-spotnfix-status .site-header {
 .delete-account-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 400;
+  z-index: 10050;
   display: grid;
   place-items: center;
   background: rgba(0, 0, 0, 0.45);
   padding: 16px;
+  pointer-events: auto;
 }
 
 .delete-account-backdrop[hidden] {
@@ -2310,7 +2311,7 @@ body.has-spotnfix-status .site-header {
   border-radius: 12px;
   padding: 24px;
   position: relative;
-  z-index: 401;
+  z-index: 10051;
   pointer-events: auto;
 }
 

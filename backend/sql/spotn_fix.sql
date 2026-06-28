@@ -1,10 +1,35 @@
--- SpotN'Fix database schema (MariaDB / MySQL via XAMPP)
--- Normalized to Third Normal Form (3NF):
---   - Lookup tables for floors, facility types, and issue types (no repeating groups)
---   - Room floor comes only from tbl_floors via tbl_room (no duplicate floor on rooms)
---   - Facilities reference floor_id and facility_type_id (no transitive dependencies)
---   - Reports reference issue_type_id instead of free-text issue labels
-
+-- SpotN'Fix database schema (MariaDB / MySQL / TiDB Cloud)
+--
+-- NORMALIZATION: Third Normal Form (3NF)
+--   1NF: Atomic columns, no repeating groups
+--   2NF: No partial key dependencies (all non-keys depend on full PK)
+--   3NF: No transitive dependencies — lookup tables for floors, facility types,
+--        and issue types; reports/facilities reference IDs not duplicated labels
+--
+-- PRIMARY KEYS (10 tables)
+--   tbl_users.user_id
+--   tbl_floors.floor_id
+--   tbl_facility_types.facility_type_id
+--   tbl_issue_types.issue_type_id
+--   tbl_room.room_number
+--   tbl_facilities.facility_id
+--   tbl_issue_reports.report_id
+--   tbl_maintenance_tasks.task_id
+--   tbl_activity_logs.log_id
+--   tbl_contact_messages.contact_id
+--
+-- FOREIGN KEYS (9 relationships)
+--   tbl_room.floor_id                    -> tbl_floors.floor_id
+--   tbl_facilities.facility_type_id      -> tbl_facility_types.facility_type_id
+--   tbl_facilities.floor_id              -> tbl_floors.floor_id
+--   tbl_issue_reports.facility_id        -> tbl_facilities.facility_id
+--   tbl_issue_reports.user_id            -> tbl_users.user_id
+--   tbl_issue_reports.issue_type_id      -> tbl_issue_types.issue_type_id
+--   tbl_maintenance_tasks.report_id      -> tbl_issue_reports.report_id
+--   tbl_maintenance_tasks.assigned_to    -> tbl_users.user_id
+--   tbl_activity_logs.user_id            -> tbl_users.user_id
+--
+-- See DATABASE_SCHEMA.md for full documentation and ER diagram.
 CREATE DATABASE IF NOT EXISTS `spotn_fix`
   DEFAULT CHARACTER SET utf8mb4
   COLLATE utf8mb4_general_ci;

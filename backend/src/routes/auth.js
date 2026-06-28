@@ -150,16 +150,32 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
+function normalizeIdNumber(value) {
+  const digits = String(value ?? "").replace(/\D/g, "").trim();
+  return digits || null;
+}
+
+async function resolveAccountIdNumber(req) {
+  const fromToken = normalizeIdNumber(req.user.idNumber);
+  if (fromToken) return fromToken;
+
+  const [rows] = await pool.query("SELECT id_number FROM tbl_users WHERE user_id = ?", [req.user.userId]);
+  if (!rows.length) return null;
+  return normalizeIdNumber(rows[0].id_number);
+}
+
 router.delete("/account", authRequired, async (req, res) => {
   const connection = await pool.getConnection();
   try {
-    const idNumber = Number(req.body.idNumber);
-    if (!idNumber) {
-      return res.status(400).json({ error: "Student number is required." });
+    const submittedId = normalizeIdNumber(req.body.idNumber);
+    const accountId = await resolveAccountIdNumber(req);
+
+    if (!submittedId) {
+      return res.status(400).json({ error: "ID number is required." });
     }
 
-    if (Number(req.user.idNumber) !== idNumber) {
-      return res.status(403).json({ error: "Student number does not match your account." });
+    if (!accountId || submittedId !== accountId) {
+      return res.status(403).json({ error: "ID number does not match your account." });
     }
 
     const userId = req.user.userId;
